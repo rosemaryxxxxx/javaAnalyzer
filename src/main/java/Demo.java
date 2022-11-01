@@ -11,8 +11,6 @@ import java.util.zip.ZipInputStream;
 
 
 public class Demo {
-    //保存Java2String
-//    String content;
     
     public static void main(String[] args) {
         // 要进行解压缩的zip文件
@@ -43,8 +41,19 @@ public class Demo {
                     // 获取zip压缩包中的子文件名称
                     String zipEntryFileName = zipEntry.getName();
 
-                    // 创建该文件的输出流,解压后的文件保存位置”D:\\code\\javazip\\t\\1.java“
-                    String zipFilePath = targetDir.getPath() + "\\" + zipEntryFileName.substring(zipEntryFileName.indexOf("/") + 1, zipEntryFileName.length());
+                    //将zipEntryFileName中/替换成\
+                    String zipEntryFileName1=zipEntryFileName.replaceAll("/", "\\\\");
+
+                    // 创建该文件的输出流,解压后的文件保存位置，例如”D:\\code\\javazip\\t\\1.java“
+                    String zipFilePath = targetDir.getPath() + "\\" + zipEntryFileName1.substring(zipEntryFileName1.indexOf("\\")+1);
+
+                    // 创建解压缩子目录
+                    File f = new File(zipFilePath);
+                    File innerTargetDir = new File(f.getParent());
+                    if (!innerTargetDir.exists()) {
+                        innerTargetDir.mkdir();
+                    }
+
                     // 输出流定义在try()块，结束自动清空缓冲区并关闭
                     try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(zipFilePath))) {
 
@@ -64,6 +73,7 @@ public class Demo {
         }
 
     }
+
 }
 //
 //import java.io.*;
