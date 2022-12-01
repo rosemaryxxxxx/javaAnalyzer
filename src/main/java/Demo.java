@@ -1,18 +1,19 @@
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
 public class Demo {
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        String path = "D:\\code\\javazip\\t.zip";
+        ZipFile zf = new ZipFile(path);
+
         // 要进行解压缩的zip文件
         File zipFile = new File("D:\\code\\javazip\\t.zip");
 
@@ -30,6 +31,10 @@ public class Demo {
             targetDir.mkdir(); // 创建目录
         }
 
+        //实例化KMP类，以调用kmp算法进行字符串匹配
+        KMP kmp = new KMP();
+
+
         // 2.解析读取zip文件
         try (ZipInputStream in = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("gbk"))) {
             // 遍历zip文件中的每个子文件
@@ -37,7 +42,7 @@ public class Demo {
 
             while ((zipEntry = in.getNextEntry()) != null) {
                 if (zipEntry.toString().endsWith("java")) {
-
+                    System.out.println("这是一个java文件："+zipEntry);
                     // 获取zip压缩包中的子文件名称
                     String zipEntryFileName = zipEntry.getName();
 
@@ -66,6 +71,24 @@ public class Demo {
                     }
                     String content = new String(Files.readAllBytes(Paths.get(zipFilePath)));
                     System.out.println(content);
+                } else if ((zipEntry.toString().endsWith("LICENSE"))){
+                    System.out.println("这是LICENSE："+zipEntry);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(zf.getInputStream(zipEntry)));
+                    String line;
+                    String firstLine;
+//                    //打印出所有行
+//                    while((line = br.readLine()) != null){
+//                        System.out.println(line.toString());
+//                    }
+                    //打印出第一行
+                    firstLine = br.readLine();
+                    System.out.println(firstLine);
+                    kmp.kmp(firstLine,"MIT");
+
+                    br.close();
+                    //拿到每个文件对象的文件名
+                    String zipEntryFileName = zipEntry.getName();
+                    System.out.println(zipEntryFileName);
                 }
             }
         } catch (IOException e) {
