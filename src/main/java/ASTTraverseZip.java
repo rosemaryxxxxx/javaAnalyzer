@@ -1,29 +1,56 @@
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-
-public class Demo {
+public class ASTTraverseZip {
 
     public static void main(String[] args) throws IOException {
 
-        String path = "D:\\code\\javazip\\t220.zip";
+        String filepath = "D:\\code\\javazip\\t0222";
 
-        // 要进行解压缩的zip文件
-        File zipFile = new File(path);
+        ASTTraverseZip astTraverseZip = new ASTTraverseZip();
+        File fileArray[] = astTraverseZip.getFileName(filepath);
+        //处理文件中每一个.zip文件
+        for (File file : fileArray ){
+            if(file.getName().endsWith(".zip")){//只处理.zip文件
+                astTraverseZip.astTraverseZip(file.getPath());
+            }else{
+                System.out.println(file.getName()+"[非zip文件]");
+            }
+        }
+    }
 
+    /**
+     * 获取文件夹中所有zip文件的文件名
+     * @param filepath
+     */
+    public File[] getFileName(String filepath){
+        File f = new File(filepath);//获取路径  F:测试目录
+        if (!f.exists()) {
+            System.out.println(filepath + " not exists");//不存在就输出
+            return null;
+        }
+
+        return f.listFiles();//用数组接收
+//        for (int i = 0; i < fa.length; i++) {//循环遍历
+//            File fs = fa[i];//获取数组中的第i个
+//            if (fs.isDirectory()) {
+//                System.out.println(fs.getName() + " [目录]");//如果是目录就输出
+//            } else {
+//                System.out.println(fs.getName());//否则直接输出
+//            }
+//        }
+    }
+
+    /**
+     * 遍历一个zip文件中的所有.java文件，获取每个method中需要的部分
+     * @param pathzip
+     */
+    public void astTraverseZip(String pathzip){
+        File zipFile = new File(pathzip);
         // 1.创建解压缩目录
         // 获取zip文件的名称
         String zipFileName = zipFile.getName();
@@ -83,11 +110,7 @@ public class Demo {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
-
 }
-
-

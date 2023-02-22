@@ -12,6 +12,7 @@ import com.github.javaparser.printer.YamlPrinter;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -19,7 +20,17 @@ public class ASTTraverse {
     public static String PATH = "D:\\code\\javazip\\t\\t1\\t219.java";
 
     public static void main(String[] args) throws IOException {
-        FileInputStream in = new FileInputStream(PATH);
+        ASTTraverse astTraverse = new ASTTraverse();
+        astTraverse.astTraverse(PATH);
+    }
+
+    /**
+     * 遍历AST，从AST中获取想要的元素
+     * @param path
+     * @throws FileNotFoundException
+     */
+    public void astTraverse(String path) throws FileNotFoundException {
+        FileInputStream in = new FileInputStream(path);
         ParseResult<CompilationUnit> result = new JavaParser().parse(in);
         if(result.getResult().isPresent()){
             result.getResult().get().accept(new MethodVisitor(), null);
@@ -27,7 +38,7 @@ public class ASTTraverse {
         }
     }
 
-    private static class MethodVisitor extends VoidVisitorAdapter<Void> {
+    static class MethodVisitor extends VoidVisitorAdapter<Void> {
         @Override
         public void visit(MethodDeclaration n, Void arg) {
             /* here you can access the attributes of the method.
@@ -43,15 +54,6 @@ public class ASTTraverse {
             super.visit(n, arg);
         }
 
-//        @Override
-//        public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-//            System.out.println("class:"+n.getName());
-//            System.out.println("extends:"+n.getExtendedTypes());
-//            System.out.println("implements:"+n.getImplementedTypes());
-//
-//            super.visit(n, arg);
-//        }
-
         @Override
         /**
          * 截取javadoc第一句
@@ -64,6 +66,16 @@ public class ASTTraverse {
             System.out.println("description:"+description);
             super.visit(n, arg);
         }
+
+//        @Override
+//        public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+//            System.out.println("class:"+n.getName());
+//            System.out.println("extends:"+n.getExtendedTypes());
+//            System.out.println("implements:"+n.getImplementedTypes());
+//
+//            super.visit(n, arg);
+//        }
+
 
 //        @Override
 //        public void visit(PackageDeclaration n, Void arg) {
