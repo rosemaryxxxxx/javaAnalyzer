@@ -96,7 +96,7 @@ public class ASTTraverseZip {
                     File f = new File(zipFilePath);
                     File innerTargetDir = new File(f.getParent());
                     if (!innerTargetDir.exists()) {
-                        innerTargetDir.mkdir();
+                        innerTargetDir.mkdirs();
                     }
 
                     // 输出流定义在try()块，结束自动清空缓冲区并关闭

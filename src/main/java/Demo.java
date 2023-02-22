@@ -19,8 +19,8 @@ public class Demo {
 
     public static void main(String[] args) throws IOException {
 
-        String path = "D:\\code\\javazip\\t220.zip";
-
+        String path = "D:\\code\\javazip\\t1.zip";
+//        String path = "D:\\code\\javazip\\160402.zip";
         // 要进行解压缩的zip文件
         File zipFile = new File(path);
 
@@ -42,8 +42,8 @@ public class Demo {
 
             while ((zipEntry = in.getNextEntry()) != null) {
                 String zipFilePath = null;
-                if (zipEntry.toString().endsWith("java")) {
-//                    System.out.println("这是一个java文件：" + zipEntry);
+                if (zipEntry.toString().endsWith(".java")) {
+                    System.out.println("这是一个java文件：" + zipEntry);
                     // 获取zip压缩包中的子文件名称
                     String zipEntryFileName = zipEntry.getName();
 
@@ -57,7 +57,8 @@ public class Demo {
                     File f = new File(zipFilePath);
                     File innerTargetDir = new File(f.getParent());
                     if (!innerTargetDir.exists()) {
-                        innerTargetDir.mkdir();
+                        //mkdirs()根据绝对路径新建目录，如果上一级目录不存在，则会将上一级目录创建完后，再创建后面一级的目录
+                        innerTargetDir.mkdirs();
                     }
 
                     // 输出流定义在try()块，结束自动清空缓冲区并关闭

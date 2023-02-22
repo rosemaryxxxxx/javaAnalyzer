@@ -11,11 +11,11 @@ public class licenseCheck {
 
     public static void main(String[] args) throws IOException {
 
-        String path = "D:\\code\\javazip\\160402.zip";
+        String path = "D:\\code\\javazip\\t1.zip";
         ZipFile zf = new ZipFile(path);
 
         // 要进行解压缩的zip文件
-        File zipFile = new File("D:\\code\\javazip\\160402.zip");
+        File zipFile = new File("D:\\code\\javazip\\t1.zip");
 
         // 1.创建解压缩目录
         // 获取zip文件的名称
@@ -28,7 +28,7 @@ public class licenseCheck {
         File targetDir = new File(zipFile.getParent() + "\\" + targetDirName);
 
         if (!targetDir.exists()) {
-            targetDir.mkdir(); // 创建目录
+            targetDir.mkdirs(); // 创建目录
         }
 
         //实例化KMP类，以调用kmp算法进行字符串匹配
