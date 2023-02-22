@@ -10,10 +10,7 @@ import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.YamlPrinter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 
 public class ASTTraverse {
@@ -39,12 +36,14 @@ public class ASTTraverse {
     }
 
     static class MethodVisitor extends VoidVisitorAdapter<Void> {
+
         @Override
         public void visit(MethodDeclaration n, Void arg) {
             /* here you can access the attributes of the method.
              this method will be called for all methods in this
              CompilationUnit, including inner class methods */
             System.out.println("method name:"+n.getName());
+
             super.visit(n, arg);
         }
 

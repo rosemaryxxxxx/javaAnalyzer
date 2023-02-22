@@ -1,3 +1,11 @@
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -6,6 +14,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ASTTraverseZip {
+
+    public static String res = "";
+    //输出的txt文件保存路径
+    public static String pathTxt = "D:\\code\\javazip\\" + "result.txt";
 
     public static void main(String[] args) throws IOException {
 
@@ -97,12 +109,12 @@ public class ASTTraverseZip {
                             bos.write(buff, 0, len);
                         }
                     }
-                    String content = new String(Files.readAllBytes(Paths.get(zipFilePath)));
+//                    String content = new String(Files.readAllBytes(Paths.get(zipFilePath)));
 //                    System.out.println(content);
 
                     //调用Asttraverse()方法对每一个.java文件进行遍历
-                    ASTTraverse astTraverse = new ASTTraverse();
-                    astTraverse.astTraverse(zipFilePath);
+                    ASTTraverseZip astTraverseZip = new ASTTraverseZip();
+                    astTraverseZip.astTraverseJava(zipFilePath);
 
                 }
 
@@ -110,6 +122,70 @@ public class ASTTraverseZip {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    public void astTraverseJava(String path) throws IOException {
+        FileInputStream in = new FileInputStream(path);
+        ParseResult<CompilationUnit> result = new JavaParser().parse(in);
+
+        if(result.getResult().isPresent()){
+            result.getResult().get().accept(new MethodVisitorJava(), null);
+//            result.getResult().ifPresent(YamlPrinter::print);
+        }
+
+        //把内容输出到txt文件
+        FileWriter fw;
+        try
+        {
+            File file = new File(pathTxt);
+            if (!file.exists())
+            {
+                file.createNewFile();
+            }
+            fw = new FileWriter(pathTxt);
+            BufferedWriter bw=new BufferedWriter(fw);
+            bw.write(res);
+            bw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    static class MethodVisitorJava extends VoidVisitorAdapter<Void> {
+
+        @Override
+        public void visit(MethodDeclaration n, Void arg) {
+            System.out.println("method name:"+n.getName());
+            res += "method name:"+n.getName() + "\n";
+            super.visit(n, arg);
+        }
+
+        @Override
+        public void visit(BlockStmt n, Void arg){
+            System.out.println("method body:"+n.toString());
+            res += "method body:"+n.toString()+ "\n";
+            super.visit(n, arg);
+        }
+
+        @Override
+        /**
+         * 截取javadoc第一句
+         */
+        public void visit(JavadocComment n, Void arg){
+//            System.out.println("package:"+n.toString());
+            String des = n.toString();
+            des = des.substring(8);
+            String description = des.substring(0,des.indexOf('\n'));
+            System.out.println("description:"+description);
+            res += "description:"+description+ "\n\n";
+            super.visit(n, arg);
+        }
+
+
     }
 
 
