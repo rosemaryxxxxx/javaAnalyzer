@@ -58,6 +58,11 @@ public class KMP {
         }
     }
 
+    private int test(){
+        System.out.println("this is a test!");
+        return 0;
+    }
+
     public static void main(String[] args){
         String parent = "MIT License";
         String sub = "MIT";
