@@ -58,8 +58,13 @@ public class KMP {
         }
     }
 
-    private int test(){
-        System.out.println("this is a test!");
+    public int test(int x){
+        System.out.println("this is a test!"+ x);
+        return 0;
+    }
+
+    private int testprivate(){
+        System.out.println("test !");
         return 0;
     }
 

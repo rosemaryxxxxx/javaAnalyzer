@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 public class javaParserTest {
     public static void main(String[] args) throws IOException {
-        String path="D:\\code\\javazip\\t\\t1\\t219.java";
+        String path="D:\\code\\javazip\\t232\\deadcodetest\\calls\\calls.java";
         File base = new File(path);
         ParseResult<CompilationUnit> result = new JavaParser().parse(base);
         //yaml格式输出AST
@@ -21,7 +21,7 @@ public class javaParserTest {
         //xml格式输出AST
         //result.getResult().ifPresent(XmlPrinter::print);
         //dot格式输出AST，可以用Graphiz实现AST的可视化
-       // result.getResult().ifPresent(e -> System.out.println(new DotPrinter(true).output(e)));
+//        result.getResult().ifPresent(e -> System.out.println(new DotPrinter(true).output(e)));
     }
 
 }

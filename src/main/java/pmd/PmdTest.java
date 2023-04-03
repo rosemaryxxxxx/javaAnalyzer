@@ -14,11 +14,14 @@ public class PmdTest {
 //        PMD.main(pmdArgs);
 
     PMDConfiguration configuration = new PMDConfiguration();
-        configuration.setInputPaths("D:/code/javaAnalyzer/src/main/java/KMP.java");
-        configuration.addRuleSet("D:/software/pmd/pmd-src-6.55.0/pmd-java/src/main/resources/rulesets/java/unusedcode.xml");
+        configuration.setInputPaths("D:/code/javaAnalyzer/src/main/java/pmd/deadcodetest/utils/KMPWithMain.java");
+        configuration.addRuleSet("D:/code/pmdrules/unusedmethod.xml");
         configuration.setReportFormat("json");
-        configuration.setReportFile("D:/code/javaAnalyzer/src/main/java/t2.json");
+        configuration.setReportFile("D:/code/pmdrules/report/KMPWithMain2.json");
         PMD.runPmd(configuration);
-}
+
+    }
+
+
 
 }

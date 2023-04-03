@@ -57,6 +57,11 @@
             <version>1.2.70</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.adrninistrator</groupId>
+            <artifactId>java-all-call-graph</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
     </dependencies>
 

@@ -12,27 +12,32 @@ import java.util.List;
 public class JsonParser {
 
     public static void main(String arg[]){
-        String filePath = "D:\\code\\javaAnalyzer\\src\\main\\java\\t2.json";
+        String filePath = "D:\\code\\pmdrules\\report\\t1.json";
         // 读取json文件
         JSONObject jsonObejct = readJsonFile(filePath);
 
         JSONArray jsonArray = JSONArray.parseArray(jsonObejct.getString("files"));
-        JSONObject fileObject = JSONObject.parseObject(jsonArray.get(0).toString());
-        String filepath = fileObject.getString("filename");
-        JSONArray violationsArray = JSONArray.parseArray(fileObject.getString("violations"));
-        int sizeOfViolationsArray = violationsArray.size();
-        List<int[]> positions = new ArrayList<>();
-        for(int i = 0;i<sizeOfViolationsArray;i++) {
-            JSONObject violationsObject = JSONObject.parseObject(violationsArray.get(i).toString());
-            int beginline = violationsObject.getIntValue("beginline");
-            int begincolumn = violationsObject.getIntValue("begincolumn");
-            int endline = violationsObject.getIntValue("endline");
-            int endcolumn = violationsObject.getIntValue("endcolumn");
-            int[] position = new int[]{beginline, begincolumn, endline, endcolumn};
-            positions.add(position);
+        for (int j = 0;j<jsonArray.size();j++){
+            JSONObject fileObject = JSONObject.parseObject(jsonArray.get(j).toString());
+            String filepath = fileObject.getString("filename");
+            JSONArray violationsArray = JSONArray.parseArray(fileObject.getString("violations"));
+            int sizeOfViolationsArray = violationsArray.size();
+            List<int[]> positions = new ArrayList<>();
+            for(int i = 0;i<sizeOfViolationsArray;i++) {
+                JSONObject violationsObject = JSONObject.parseObject(violationsArray.get(i).toString());
+                int beginline = violationsObject.getIntValue("beginline");
+                int begincolumn = violationsObject.getIntValue("begincolumn");
+                int endline = violationsObject.getIntValue("endline");
+                int endcolumn = violationsObject.getIntValue("endcolumn");
+                int[] position = new int[]{beginline, begincolumn, endline, endcolumn};
+                positions.add(position);
+        }
+
         }
 
     }
+
+
 
     /**
      * 读取json文件信息
