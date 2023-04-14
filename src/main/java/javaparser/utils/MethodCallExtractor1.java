@@ -8,30 +8,89 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class MethodCallExtractor1 {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+//    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java";
+    private static String PATH;
+    public static String pakageName;
+    public static List<String> imports;
+    public static List<StringBuffer> fullMethods;
+    public static Map<StringBuffer, Set<String>> methodCallsWithCallee;
 
-    public static void main(String[] args) throws Exception {
-        FileInputStream in = new FileInputStream(new File(PATH));
+    public static Map<StringBuffer, Set<String>> getMethodCallsWithCallee() {
+        return methodCallsWithCallee;
+    }
+
+    public static void setMethodCallsWithCallee(Map<StringBuffer, Set<String>> methodCallsWithCallee) {
+        MethodCallExtractor1.methodCallsWithCallee = methodCallsWithCallee;
+    }
+
+    public static List<StringBuffer> getFullMethods() {
+        return fullMethods;
+    }
+
+    public static void setFullMethods(List<StringBuffer> fullMethods) {
+        MethodCallExtractor1.fullMethods = fullMethods;
+    }
+
+    public static String getPATH() {
+        return PATH;
+    }
+    public static void setPATH(String PATH) {
+        MethodCallExtractor1.PATH = PATH;
+    }
+
+
+    public static String getPakageName() {
+        return pakageName;
+    }
+
+    public static void setPakageName(String pakageName) {
+        MethodCallExtractor1.pakageName = pakageName;
+    }
+
+    public static List<String> getImports() {
+        return imports;
+    }
+
+    public static void setImports(List<String> imports) {
+        MethodCallExtractor1.imports = imports;
+    }
+
+    public void startParse() throws FileNotFoundException {
+        FileInputStream in = new FileInputStream(PATH);
         CompilationUnit cu = StaticJavaParser.parse(in);
 
         MethodCallVisitor visitor = new MethodCallVisitor();
         visitor.visit(cu, null);
 
-        Map<StringBuffer, Set<String>> methodCalls = visitor.getMethodCalls();
-        for (Map.Entry<StringBuffer, Set<String>> entry : methodCalls.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+        //输出packageName
+        String packageName = visitor.getPackageName();
+        setPakageName(packageName);
+//        System.out.println("package:"+packageName);
 
+        //输出imports
         List<String> imports = visitor.getImports();
-        for (String i : imports) {
-            System.out.println("import:"+i);
+        setImports(imports);
+//        for (String i : imports) {
+//            System.out.println("import:"+i);
+//        }
+
+        //输出方法的完整路径以及其调用的方法
+        Map<StringBuffer, Set<String>> methodCalls = visitor.getMethodCalls();
+        setMethodCallsWithCallee(methodCalls);
+        List<StringBuffer> fullMethods = new ArrayList<>();
+        for (Map.Entry<StringBuffer, Set<String>> entry : methodCalls.entrySet()) {
+            fullMethods.add(entry.getKey());
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
+        setFullMethods(fullMethods);
+
     }
+
 
     private static class MethodCallVisitor extends VoidVisitorAdapter<Void> {
 
@@ -61,7 +120,7 @@ public class MethodCallExtractor1 {
 
         @Override
         public void visit(PackageDeclaration n, Void arg) {
-            System.out.println("package:"+n.getName());
+//            System.out.println("package:"+n.getName());
             packageName = n.getNameAsString();
             super.visit(n, arg);
         }
@@ -75,6 +134,7 @@ public class MethodCallExtractor1 {
         public List<String> getImports() {
             return imports;
         }
+        public String getPackageName() { return packageName;}
 
         public Map<StringBuffer, Set<String>> getMethodCalls() {
             return methodCalls;

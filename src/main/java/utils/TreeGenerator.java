@@ -1,5 +1,7 @@
 package utils;
 
+import tree.TreeNode;
+
 import java.util.*;
 
 public class TreeGenerator {
@@ -12,20 +14,16 @@ public class TreeGenerator {
                 "pmd.deadcodetest.utils.KMP.testprivate1111()"
         );
 
-//        for (String s: paths
-//             ) {
-//            s.replaceAll("/",".");
-//        }
-
-//        pmd.deadcodetest.utils.KMP.test1111(int): [println]
-//        pmd.deadcodetest.utils.KMP.buildNext(String): [length, charAt]
-//        pmd.deadcodetest.utils.KMP.kmp(StringString): [println, length, buildNext, charAt]
-//        pmd.deadcodetest.utils.KMP.testprivate1111(): [println]
-
-
+        //初始化树
         TreeNode root = generateTree(paths);
-
+        //打印树的结构
         printTree(root, 0);
+        //删除某个节点
+        String path = "pmd.deadcodetest.utils.KMP.kmp(StringString)";
+        printTree(deleteMethod(root,path),0);
+        //把树形结构转化成list输出
+        List<String> treeToList = dfsTree(root);
+        System.out.println(treeToList);
     }
 
     private static TreeNode generateTree(List<String> paths) {
@@ -66,37 +64,67 @@ public class TreeGenerator {
         return sb.toString();
     }
 
-    private static class TreeNode {
 
-        private String name;
-        private List<TreeNode> children;
+    //
+    public static TreeNode deleteMethod(TreeNode root,String path){
+//        path = "pmd.deadcodetest.utils.KMP.kmp(StringString)";
+        String[] segments = path.split("\\.");
+        int len = segments.length;
+        TreeNode node = root;
+        int i = 0;
+        for (; i<len-1;i++) {
+            if (!segments[i].isEmpty()) {
 
-        public TreeNode(String name) {
-            this.name = name;
-            this.children = new ArrayList<>();
+                TreeNode child = node.getChild(segments[i]);
+//                if (child == null) {
+//                    child = new TreeNode(segment);
+//                    node.addChild(child);
+//                }
+                node = child;
+            }
         }
+        node.removeChild(node.getChild(segments[i]));
+        return root;
+    }
 
-        public String getName() {
-            return name;
-        }
+    public static List<String> dfsTree(TreeNode root) {
+        Stack<TreeNode> nodeStack = new Stack<>();
+        Stack<List<TreeNode>> pathStack = new Stack<>();
+        List<List<TreeNode>> result = new ArrayList<>();
+        nodeStack.push(root);
+        ArrayList<TreeNode> arrayList = new ArrayList<>();
+        arrayList.add(root);
+        pathStack.push(arrayList);
 
-        public List<TreeNode> getChildren() {
-            return children;
-        }
+        while (!nodeStack.isEmpty()) {
+            TreeNode curNode = nodeStack.pop();
+            List<TreeNode> curPath = pathStack.pop();
 
-        public void addChild(TreeNode child) {
-            children.add(child);
-        }
-
-        public TreeNode getChild(String name) {
-            for (TreeNode child : children) {
-                if (child.getName().equals(name)) {
-                    return child;
+            if (curNode.getChildren() == null || curNode.getChildren().size() <= 0) {
+                result.add(curPath);
+            } else {
+                int childSize = curNode.getChildren().size();
+                for (int i = childSize - 1; i >= 0; i--) {
+                    TreeNode node = curNode.getChildren().get(i);
+                    nodeStack.push(node);
+                    List<TreeNode> list = new ArrayList<>(curPath);
+                    list.add(node);
+                    pathStack.push(list);
                 }
             }
-            return null;
         }
+        String path = "";
+        List<String> res = new ArrayList<>();
+        for(List<TreeNode> pathNode : result){
+            for(TreeNode node : pathNode){
+                path += "."+node.getName();
+            }
+            res.add(path.substring(6));
+            path = "";
+        }
+        return res;
     }
+
 
 }
 
