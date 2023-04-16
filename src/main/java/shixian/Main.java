@@ -22,7 +22,7 @@ public class Main {
         List<String> imports = new ArrayList<>();
 
         MethodCallExtractor1 methodCallExtractor1 = new MethodCallExtractor1();
-//        methodCallExtractor1.setPATH("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java");
+//        methodCallExtractor1.setPATH("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java");
         methodCallExtractor1.setPATH(path);
         methodCallExtractor1.startParse();
 //        System.out.println("packageName:"+methodCallExtractor1.getPakageName());
@@ -40,13 +40,14 @@ public class Main {
 
     public static void main(String[] srgs) throws FileNotFoundException {
         List<String> paths = new ArrayList<>();
-        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java");
+//        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java");
         paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
         for(String path : paths){
             parseJava(path);
         }
         System.out.println(fullMethods);
         System.out.println(methodCallsWithCallee);
+
 
     }
 }

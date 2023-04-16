@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MethodCallFinder {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
 
     public static void main(String[] args) throws Exception {
         // 读取Java源文件

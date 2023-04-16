@@ -6,7 +6,7 @@ import net.sourceforge.pmd.PMDConfiguration;
 public class PmdTest {
     public static void main(String[] args) {
 //        String[] pmdArgs = {
-//                "-d", "D:/code/javaAnalyzer/src/main/java/KMP.java",
+//                "-d", "D:/code/javaAnalyzer/src/main/java/utils.KMP.java",
 //                "-R", "D:/software/pmd/pmd-src-6.55.0/pmd-java/src/main/resources/rulesets/java/unusedcode.xml",
 //                "-f", "json",
 //                "-r", "D:/code/javaAnalyzer/src/main/java/t1.json"

@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 public class ASTTraverse {
     //    public static String PATH = "D:\\code\\javazip\\t\\t1\\t219.java";
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
 
 
     public static void main(String[] args) throws IOException {

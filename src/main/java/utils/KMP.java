@@ -1,3 +1,5 @@
+package utils;
+
 public class KMP {
     //构建next表
     public static int[] buildNext(String sub){

@@ -8,7 +8,7 @@ import javaparser.visitors.MethodCallVisitor;
 import java.io.FileInputStream;
 
 public class Main1 {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
     public static void main(String[] args) throws Exception {
 
         FileInputStream in = new FileInputStream(PATH);

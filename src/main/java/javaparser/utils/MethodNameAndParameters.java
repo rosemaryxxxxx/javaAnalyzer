@@ -8,7 +8,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.io.File;
 
 public class MethodNameAndParameters {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
 
     public static void main(String[] args) throws Exception {
 

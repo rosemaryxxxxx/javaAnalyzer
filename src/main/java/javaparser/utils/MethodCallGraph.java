@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MethodCallGraph {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
 
     public static void main(String[] args) throws IOException {
         // Parse the Java file into an AST

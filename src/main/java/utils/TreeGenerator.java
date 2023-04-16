@@ -8,10 +8,10 @@ public class TreeGenerator {
 
     public static void main(String[] args) {
         List<String> paths = Arrays.asList(
-                "pmd.deadcodetest.utils.KMP.test1111(int)",
-                "pmd.deadcodetest.utils.KMP.buildNext(String)",
-                "pmd.deadcodetest.utils.KMP.kmp(StringString)",
-                "pmd.deadcodetest.utils.KMP.testprivate1111()"
+                "pmd.deadcodetest.utils.utils.KMP.test1111(int)",
+                "pmd.deadcodetest.utils.utils.KMP.buildNext(String)",
+                "pmd.deadcodetest.utils.utils.KMP.kmp(StringString)",
+                "pmd.deadcodetest.utils.utils.KMP.testprivate1111()"
         );
 
         //初始化树
@@ -19,7 +19,7 @@ public class TreeGenerator {
         //打印树的结构
         printTree(root, 0);
         //删除某个节点
-        String path = "pmd.deadcodetest.utils.KMP.kmp(StringString)";
+        String path = "pmd.deadcodetest.utils.utils.KMP.kmp(StringString)";
         printTree(deleteMethod(root,path),0);
         //把树形结构转化成list输出
         List<String> treeToList = dfsTree(root);
@@ -67,7 +67,7 @@ public class TreeGenerator {
 
     //
     public static TreeNode deleteMethod(TreeNode root,String path){
-//        path = "pmd.deadcodetest.utils.KMP.kmp(StringString)";
+//        path = "pmd.deadcodetest.utils.utils.KMP.kmp(StringString)";
         String[] segments = path.split("\\.");
         int len = segments.length;
         TreeNode node = root;

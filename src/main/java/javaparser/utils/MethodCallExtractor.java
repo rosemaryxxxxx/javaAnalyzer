@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.util.*;
 
 public class MethodCallExtractor {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
 
     public static void main(String[] args) throws Exception {
         FileInputStream in = new FileInputStream(new File(PATH));
