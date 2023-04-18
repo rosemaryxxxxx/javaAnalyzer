@@ -1,8 +1,7 @@
 package pmd.deadcodetest.calls;
 
 
-import  pmd.deadcodetest.utils.*;
-import static pmd.deadcodetest.utils.KMPWithMain.kmpwithmain;
+import  pmd.deadcodetest.utils.KMP;
 
 
 public class calls {
