@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 
 public class javaParserTest {
     public static void main(String[] args) throws IOException {
-        String path="D:\\code\\javazip\\t232\\deadcodetest\\calls\\calls.java";
+        String path="D:\\codebaseOfCodeMatcher\\2\\Conversions\\OctalToBinary.java";
         File base = new File(path);
         ParseResult<CompilationUnit> result = new JavaParser().parse(base);
         //yaml格式输出AST

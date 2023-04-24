@@ -2,12 +2,28 @@ package javaparser.visitors;
 
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class MethodCallVisitor extends VoidVisitorAdapter<Void> {
 
     public String packageName;
     public String methodName;
+
+
+    @Override
+    public void visit(MethodCallExpr n, Void arg) {
+        System.out.println("Method call: " + n.getName());
+        super.visit(n, arg);
+    }
+
+    @Override
+    public void visit(ObjectCreationExpr n, Void arg) {
+        System.out.println("Object creation: " + n.getType().getName());
+        super.visit(n, arg);
+    }
+
 
 //    @Override
 //    public void visit(MethodDeclaration n, Void arg) {
@@ -25,15 +41,15 @@ public class MethodCallVisitor extends VoidVisitorAdapter<Void> {
 //    }
 
 
-    @Override
-    public void visit(MethodDeclaration n, Void arg) {
-            /* here you can access the attributes of the method.
-             this method will be called for all methods in this
-             CompilationUnit, including inner class methods */
-        System.out.println("method name:"+n.getName());
-        methodName = n.getNameAsString();
-        super.visit(n, arg);
-    }
+//    @Override
+//    public void visit(MethodDeclaration n, Void arg) {
+//            /* here you can access the attributes of the method.
+//             this method will be called for all methods in this
+//             CompilationUnit, including inner class methods */
+//        System.out.println("method name:"+n.getName());
+//        methodName = n.getNameAsString();
+//        super.visit(n, arg);
+//    }
 //
 //    @Override
 //    public void visit(BlockStmt n, Void arg){
@@ -64,10 +80,10 @@ public class MethodCallVisitor extends VoidVisitorAdapter<Void> {
 //        }
 
 
-        @Override
-        public void visit(PackageDeclaration n, Void arg) {
-            System.out.println("package:"+n.getName());
-            packageName = n.getNameAsString();
-            super.visit(n, arg);
-        }
+//        @Override
+//        public void visit(PackageDeclaration n, Void arg) {
+//            System.out.println("package:"+n.getName());
+//            packageName = n.getNameAsString();
+//            super.visit(n, arg);
+//        }
 }

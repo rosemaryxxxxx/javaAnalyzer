@@ -32,7 +32,7 @@ public class KMP {
         int sLen = sub.length();
 
         if (pLen<sLen){
-            System.err.println("Error.The main string is greater than the sub string length.");
+            System.err.println("Error.The sub string is greater than the main string length.");
             return false;
         }
 
