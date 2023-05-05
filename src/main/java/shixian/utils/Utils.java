@@ -1,5 +1,7 @@
 package shixian.utils;
 
+import java.util.HashMap;
+
 public class Utils {
     /**
      * 获取不带参数的方法名
@@ -74,4 +76,34 @@ public class Utils {
         int len = zipPath.length();
         return zipPath.substring(0,len-4);
     }
+
+    public static String analyseType(String argument){
+        if(argument.startsWith("\"") && argument.endsWith("\"")){
+            return "String";
+        }
+        if(argument.startsWith("new")){
+            int j = 0;
+            int start = 0 , end = 0;
+            for(;j<argument.length();j++){
+                if(argument.charAt(j) == ' '){
+                    start = j;
+                }
+                if(argument.charAt(j) == '('){
+                    end = j;
+                    break;
+                }
+            }
+            return argument.substring(start+1,end);
+        }
+        if(argument.endsWith("f") || argument.endsWith("F")) return "float";
+        if(argument.endsWith("d") || argument.endsWith("D")) return "double";
+        if(argument.endsWith("l") || argument.endsWith("L")) return "long";
+        char[] chars = argument.toCharArray();
+        for (char c : chars){
+            if(c<'0'||c>'9'){
+                break;
+            }
+        }
+        return "others";
+     }
 }

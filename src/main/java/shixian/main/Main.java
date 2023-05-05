@@ -17,6 +17,7 @@ public class Main {
     //装载所有的方法的完整路径以及其调用方法的方法名（非完整路径）
     public static Map<String, Set<String>> methodCallsWithCallee = new HashMap<>();
 //    //装载所有main方法和main方法调用的方法，以及后续调用的方法
+    public static List<String> deadMethods = new ArrayList<>();
 //    public static Stack<String> mainAndCalleeOfMain = new Stack<>();
 
     /**
@@ -28,12 +29,13 @@ public class Main {
 //        List<String> imports = new ArrayList<>();
 
         MethodCallExtractor1 methodCallExtractor1 = new MethodCallExtractor1();
-//        methodCallExtractor1.setPATH("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java");
+//        methodCallExtractor1.setPATH("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java");
         methodCallExtractor1.setPATH(path);
 //        methodCallExtractor1.setBeforeZipName(beforeZipName);
         methodCallExtractor1.preStartParse(beforeZipName);
 
         fullMethods.addAll(methodCallExtractor1.getFullMethods());
+        deadMethods.addAll(methodCallExtractor1.getFullMethods());
 
 
         Map<String, Set<String>> temp = new HashMap<>();
@@ -74,13 +76,13 @@ public class Main {
                     //和方法集合匹配
                     if(Objects.equals(getMethodNameInSet(name), methodNameString)){
                         sameNames.add(stringBuffer);
-//                    fullMethods.remove(stringBuffer);
                     }
                 }
 
                 if(sameNames.size() == 1){
                     mainAndCalleeOfMain.push(sameNames.get(0));
-                    fullMethods.remove(sameNames.get(0));
+//                    fullMethods.remove(sameNames.get(0));
+                    deadMethods.remove(sameNames.get(0));
                 }
                 if(sameNames.size() > 1){
                     for(String samename : sameNames){
@@ -89,7 +91,8 @@ public class Main {
                             //匹配import,注意以*结尾的import
 //                            System.out.println("方法名："+sameNameString+",import："+importEle);
                             if(KMP.kmp(sameNameString,removeStarIfExist(importEle))){
-                                fullMethods.remove(samename);
+//                                fullMethods.remove(samename);
+                                deadMethods.remove(samename);
                                 break;
                             }
                         }
@@ -108,7 +111,7 @@ public class Main {
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMPWithMain.java");
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
 
-        String zipPath = "D:\\codebaseOfCodeMatcher\\2.zip";
+        String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);
 
@@ -124,10 +127,10 @@ public class Main {
 
 
 //        parseJava("D:\\code\\javazip\\t1\\00.java");
-        System.out.println("死方法的个数："+fullMethods.size());
+        System.out.println("死方法的个数："+deadMethods.size());
 
         System.out.println("dead methods are followed:");
-        System.out.println(fullMethods);
+        System.out.println(deadMethods);
 //        System.out.println(methodCallsWithCallee);
 
 
