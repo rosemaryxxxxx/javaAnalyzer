@@ -25,7 +25,16 @@ public class MethodCallExtractor1 {
     public static List<String> fullMethods;
     public static Map<String, Set<String>> methodCallsWithCallee;
     public static Stack<String> mainAndCalleeOfMain;
-    private static  String beforeZipName;
+    private static String beforeZipName;
+    public static Map<String , List<String>> methodAndItsImports;
+
+    public static Map<String, List<String>> getMethodAndItsImports() {
+        return methodAndItsImports;
+    }
+
+    public static void setMethodAndItsImports(Map<String, List<String>> methodAndItsImports) {
+        MethodCallExtractor1.methodAndItsImports = methodAndItsImports;
+    }
 
     public static String getBeforeZipName() {
         return beforeZipName;
@@ -83,8 +92,9 @@ public class MethodCallExtractor1 {
         MethodCallExtractor1.imports = imports;
     }
 
+
     /**
-     * 获取方法集合，main栈，map.为了生成完整的方法路径所以传入参数beforeZipName
+     * 获取方法集合(除去main函数)，map.为了生成完整的方法路径所以传入参数beforeZipName
      * @param beforeZipName
      * @throws FileNotFoundException
      */
@@ -93,23 +103,30 @@ public class MethodCallExtractor1 {
 
         String packageName1 = replaceSlashWithPoint(PATH.substring(index0fLastSlash(beforeZipName)+1));
         setPakageName(packageName1);
+
         //当解析出现错误时候，比如.java文件中存在语法错误，需要继续解析下一个.java文件，捕获异常，继续执行
         try{
             CompilationUnit cu = StaticJavaParser.parse(in);
             MethodCallVisitor visitor = new MethodCallVisitor();
             visitor.visit(cu, null);
 
-            //输出packageName
-//            String packageName = visitor.getPackageName();
-//            setPakageName(packageName);
-
-
-//        System.out.println("package:"+packageName);
-
             //输出方法的完整路径以及其调用的方法
             Map<String, Set<String>> methodCalls = visitor.getMethodCalls();
             setMethodCallsWithCallee(methodCalls);
             List<String> fullMethods = new ArrayList<>();
+
+            //methodAndItsImports
+            Map<String,List<String>> methodAndItsImports = visitor.getMethodAndItsImports2();
+            //给methodAndItsImports中的imports都加上本java文件的路径
+//            for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
+//                entry1.getValue().add(packageName1);
+//            }
+            for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
+                entry1.getValue().add(packageName1);
+                //没懂为啥要break，通过debug得出规律
+                break;
+            }
+            setMethodAndItsImports(methodAndItsImports);
 
             for (Map.Entry<String, Set<String>> entry : methodCalls.entrySet()) {
                 if(!getMethodName(entry.getKey()).equals("main")){
@@ -134,10 +151,9 @@ public class MethodCallExtractor1 {
             MethodCallVisitor visitor = new MethodCallVisitor();
             visitor.visit(cu, null);
 
-            List<String> imports = visitor.getImports();
-            imports.add(packageName1);
-            setImports(imports);
-
+//            List<String> imports = visitor.getImports();
+//            imports.add(packageName1);
+//            setImports(imports);
 
             Stack<String> mainAndCalleeOfMain = new Stack<>();
             Map<String, Set<String>> methodCalls = visitor.getMethodCalls();
@@ -161,6 +177,7 @@ public class MethodCallExtractor1 {
         private StringBuffer currentMethod;
         private String packageName2;
         private List<String> imports = new ArrayList<>();
+        private Map<String,List<String>> methodAndItsImports2 = new HashMap<>();
 
         @Override
         public void visit(MethodDeclaration n, Void arg) {
@@ -172,6 +189,8 @@ public class MethodCallExtractor1 {
             n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()));
             currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
+
+            methodAndItsImports2.put(currentMethod.toString(),imports);
             super.visit(n, arg);
         }
 
@@ -184,6 +203,8 @@ public class MethodCallExtractor1 {
             n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()));
             currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
+
+            methodAndItsImports2.put(currentMethod.toString(),imports);
             super.visit(n, arg);
         }
 
@@ -238,6 +259,14 @@ public class MethodCallExtractor1 {
 
         public Map<String, Set<String>> getMethodCalls() {
             return methodCalls;
+        }
+
+        public Map<String, List<String>> getMethodAndItsImports2() {
+            return methodAndItsImports2;
+        }
+
+        public void setMethodAndItsImports2(Map<String, List<String>> methodAndItsImports2) {
+            this.methodAndItsImports2 = methodAndItsImports2;
         }
     }
 
