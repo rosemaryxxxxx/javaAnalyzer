@@ -52,7 +52,7 @@ public class Utils {
     }
 
     /**
-     * 将斜杠代替为点，并且删除路径最后的“.java”
+     * 将斜杠代替为点，并且删除路径最后的“\xx.java”
      *
      * @param s
      * @return
@@ -60,6 +60,10 @@ public class Utils {
     public static String replaceSlashWithPoint(String s){
         if(s == null) return null;
         int len = s.length();
+//        int j ;
+//        for(j =len-1;j>=0;j--){
+//            if(s.charAt(j)=='\\') break;
+//        }
         s=s.substring(0,len-5);
         String str = s.replaceAll("\\\\",".");
         return str;
@@ -106,4 +110,43 @@ public class Utils {
         }
         return "others";
      }
+
+    public static String getClassName(String path){
+        int size = path.length();
+        int left = 0,right = 0;
+        for(int i=size-1;i>0;i--){
+            if(path.charAt(i) == '.'){
+                right = i;
+            }
+            if(path.charAt(i) == '\\'){
+                left = i;
+                break;
+            }
+        }
+        return path.substring(left+1,right);
+    }
+
+    public static int index0fLastSlash(String beforeZipName){
+        int size = beforeZipName.length();
+        int j;
+        for(j = size-1;j>0;j--){
+            if(beforeZipName.charAt(j) == '\\'){
+                break;
+            }
+        }
+        return j;
+    }
+
+    public static int index0fLastPoint(String beforeZipName){
+        int size = beforeZipName.length();
+        int j;
+        for(j = size-1;j>0;j--){
+            if(beforeZipName.charAt(j) == '.'){
+                break;
+            }
+        }
+        return j;
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package shixian.main;
 
 import javaparser.utils.MethodCallExtractor1;
+import shixian.utils.Statistics;
 import utils.KMP;
 
 import java.io.FileNotFoundException;
@@ -19,6 +20,7 @@ public class Main {
 //    //装载所有main方法和main方法调用的方法，以及后续调用的方法
     public static List<String> deadMethods = new ArrayList<>();
     public static Map<String,List<String>> methodAndItsImports1 = new HashMap<>();
+    public static Map<String,List<Integer>> methodAndItsPostion1 = new HashMap<>();
 //    public static Stack<String> mainAndCalleeOfMain = new Stack<>();
 
     /**
@@ -49,6 +51,11 @@ public class Main {
         temp1.putAll(methodCallExtractor1.getMethodAndItsImports());
         methodAndItsImports1 = temp1;
 
+        Map<String,List<Integer>> temp2 = new HashMap<>();
+        temp2.putAll(methodAndItsPostion1);
+        temp2.putAll(methodCallExtractor1.getMethodAndItsPosition());
+        methodAndItsPostion1 = temp2;
+
     }
 
     /**
@@ -71,10 +78,13 @@ public class Main {
 
         Stack<String> mainAndCalleeOfMain = new Stack<>();
         mainAndCalleeOfMain.addAll(methodCallExtractor1.getMainAndCalleeOfMain());
+        System.err.println(mainAndCalleeOfMain);
 
         //主要算法逻辑
         while (!mainAndCalleeOfMain.isEmpty()){
             String mainOrCalleeOfMain = mainAndCalleeOfMain.pop();
+            //程序入口应该是活方法
+            deadMethods.remove(mainOrCalleeOfMain);
             imports = methodAndItsImports1.get(mainOrCalleeOfMain);
             Set<String> setofmethod = methodCallsWithCallee.get(mainOrCalleeOfMain);
             for (String name:setofmethod){
@@ -138,8 +148,12 @@ public class Main {
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
 
 //        String zipPath = "D:\\code\\javazip\\t0510\\javaAnalyzer.zip";
-        String zipPath = "D:\\codebaseOfCodeMatcher\\2.zip";
+          String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
+//        String zipPath = "D:\\codebaseOfCodeMatcher\\test\\2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0510\\t1.zip";
+//        String zipPath = "D:\\code\\javazip\\t0515\\aws-cognito-java-desktop-app.zip";
+//        String zipPath = "D:\\code\\javazip\\t0515\\latexdraw.zip";
+//        String zipPath = "D:\\code\\javazip\\t0530\\latexdraw.zip";
 
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);
@@ -163,6 +177,17 @@ public class Main {
         System.out.println(deadMethods);
 //        System.out.println(methodCallsWithCallee);
 
-
+        //数据分析
+        List<Integer> res = Statistics.deadMethodStatistics(methodAndItsPostion1,deadMethods);
+        float f = ((float) res.get(0)/((float) res.get(0)+(float) res.get(1)))*100.0f;
+        float f1 = ((float) res.get(2)/((float) res.get(2)+(float) res.get(3)))*100.0f;
+        System.out.println("["+zipPath+"]"+"中"+"\n"
+                +"死方法的个数："+res.get(0)+"\n"
+                +"活方法的的个数" + res.get(1)+"\n"
+                +"死方法的代码行："+res.get(2)+"\n"
+                +"活方法的代码行："+res.get(3)+"\n"
+                +"死方法的个数占全部方法个数比例："+f+"%"+"\n"
+                +"死方法代码行占全部方法代码行的比例："+f1+"%"+"\n"
+        );
     }
 }

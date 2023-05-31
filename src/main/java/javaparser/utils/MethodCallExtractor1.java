@@ -9,13 +9,14 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import org.h2.util.IntArray;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.sql.PseudoColumnUsage;
 import java.util.*;
 
-import static shixian.utils.Utils.getMethodName;
-import static shixian.utils.Utils.replaceSlashWithPoint;
+import static shixian.utils.Utils.*;
 
 public class MethodCallExtractor1 {
 //    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java";
@@ -27,6 +28,15 @@ public class MethodCallExtractor1 {
     public static Stack<String> mainAndCalleeOfMain;
     private static String beforeZipName;
     public static Map<String , List<String>> methodAndItsImports;
+    public static Map<String,List<Integer>> methodAndItsPosition;
+
+    public static Map<String, List<Integer>> getMethodAndItsPosition() {
+        return methodAndItsPosition;
+    }
+
+    public static void setMethodAndItsPosition(Map<String, List<Integer>> methodAndItsPosition) {
+        MethodCallExtractor1.methodAndItsPosition = methodAndItsPosition;
+    }
 
     public static Map<String, List<String>> getMethodAndItsImports() {
         return methodAndItsImports;
@@ -110,6 +120,10 @@ public class MethodCallExtractor1 {
             MethodCallVisitor visitor = new MethodCallVisitor();
             visitor.visit(cu, null);
 
+            //获取位置信息
+            Map<String,List<Integer>> methodAndItsPosition1 = visitor.getMethodAndItsPosition2();
+            setMethodAndItsPosition(methodAndItsPosition1);
+
             //输出方法的完整路径以及其调用的方法
             Map<String, Set<String>> methodCalls = visitor.getMethodCalls();
             setMethodCallsWithCallee(methodCalls);
@@ -121,23 +135,29 @@ public class MethodCallExtractor1 {
 //            for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
 //                entry1.getValue().add(packageName1);
 //            }
+            String pakageNameWithoutClassName = packageName1.substring(0,index0fLastPoint(packageName1));
             for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
-                entry1.getValue().add(packageName1);
+                entry1.getValue().add(pakageNameWithoutClassName);
                 //没懂为啥要break，通过debug得出规律
                 break;
             }
             setMethodAndItsImports(methodAndItsImports);
 
+            //fullMethods
             for (Map.Entry<String, Set<String>> entry : methodCalls.entrySet()) {
-                if(!getMethodName(entry.getKey()).equals("main")){
-                    fullMethods.add(entry.getKey());
-                }
+                //所有方法的集合不包含main方法
+//                if(!getMethodName(entry.getKey()).equals("main")){
+//                    fullMethods.add(entry.getKey());
+//                }
+                fullMethods.add(entry.getKey());
 //            System.out.println(entry.getKey() + ": " + entry.getValue());
             }
             setFullMethods(fullMethods);
         }catch (Exception e){
 //            e.printStackTrace();
         }
+
+
     }
 
     public void startParse(String beforeZipName) throws FileNotFoundException {
@@ -158,13 +178,13 @@ public class MethodCallExtractor1 {
             Stack<String> mainAndCalleeOfMain = new Stack<>();
             Map<String, Set<String>> methodCalls = visitor.getMethodCalls();
             for (Map.Entry<String, Set<String>> entry : methodCalls.entrySet()) {
-                if (getMethodName(entry.getKey()).equals("main")) {
+                if (getMethodName(entry.getKey()).equals("buildNext") ) {
                     mainAndCalleeOfMain.push(entry.getKey());
                 }
             }
             setMainAndCalleeOfMain(mainAndCalleeOfMain);
         }catch (Exception e){
-            //            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -178,6 +198,7 @@ public class MethodCallExtractor1 {
         private String packageName2;
         private List<String> imports = new ArrayList<>();
         private Map<String,List<String>> methodAndItsImports2 = new HashMap<>();
+        private Map<String,List<Integer>> methodAndItsPosition2 = new HashMap<>();
 
         @Override
         public void visit(MethodDeclaration n, Void arg) {
@@ -191,6 +212,19 @@ public class MethodCallExtractor1 {
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
+
+            //获取方法的位置信息
+            int startLine = n.getBegin().get().line;
+            int startCol = n.getBegin().get().column;
+            int endLine = n.getEnd().get().line;
+            int endCol = n.getEnd().get().column;
+            List<Integer> positionList = new ArrayList<>();
+            positionList.add(startLine);
+            positionList.add(startCol);
+            positionList.add(endLine);
+            positionList.add(endCol);
+            methodAndItsPosition2.put(currentMethod.toString(),positionList);
+
             super.visit(n, arg);
         }
 
@@ -268,32 +302,17 @@ public class MethodCallExtractor1 {
         public void setMethodAndItsImports2(Map<String, List<String>> methodAndItsImports2) {
             this.methodAndItsImports2 = methodAndItsImports2;
         }
+
+        public Map<String, List<Integer>> getMethodAndItsPosition2() {
+            return methodAndItsPosition2;
+        }
+
+        public void setMethodAndItsPosition2(Map<String, List<Integer>> methodAndItsPosition2) {
+            this.methodAndItsPosition2 = methodAndItsPosition2;
+        }
     }
 
-    public static String getClassName(String path){
-        int size = path.length();
-        int left = 0,right = 0;
-        for(int i=size-1;i>0;i--){
-            if(path.charAt(i) == '.'){
-                right = i;
-            }
-            if(path.charAt(i) == '\\'){
-                left = i;
-                break;
-            }
-        }
-        return path.substring(left+1,right);
-    }
-    public static int index0fLastSlash(String beforeZipName){
-        int size = beforeZipName.length();
-        int j;
-        for(j = size-1;j>0;j--){
-            if(beforeZipName.charAt(j) == '\\'){
-                break;
-            }
-        }
-        return j;
-    }
+
 
 }
 
