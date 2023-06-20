@@ -3,9 +3,11 @@ package javaparser.utils;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -178,7 +180,9 @@ public class MethodCallExtractor1 {
             Stack<String> mainAndCalleeOfMain = new Stack<>();
             Map<String, Set<String>> methodCalls = visitor.getMethodCalls();
             for (Map.Entry<String, Set<String>> entry : methodCalls.entrySet()) {
-                if (getMethodName(entry.getKey()).equals("buildNext") ) {
+//                String liveMehod = "fillShapeCreationList";
+                String liveMehod = "main";
+                if (getMethodName(entry.getKey()).equals(liveMehod) ) {
                     mainAndCalleeOfMain.push(entry.getKey());
                 }
             }
@@ -191,7 +195,7 @@ public class MethodCallExtractor1 {
 
 
 
-    private static class MethodCallVisitor extends VoidVisitorAdapter<Void> {
+    static class MethodCallVisitor extends VoidVisitorAdapter<Void> {
 
         private Map<String, Set<String>> methodCalls = new HashMap<>();
         private StringBuffer currentMethod;
@@ -245,6 +249,11 @@ public class MethodCallExtractor1 {
         @Override
         public void visit(MethodCallExpr n, Void arg) {
             String methodName = n.getNameAsString();
+            NodeList<Expression> nodeList = n.getArguments();
+            for (Expression expr : nodeList
+                 ) {
+                System.out.println(expr.calculateResolvedType().toString());
+            }
             //把被调用的方法名加入到对应set中
             if(currentMethod!=null){
                 methodCalls.get(currentMethod.toString()).add(methodName);

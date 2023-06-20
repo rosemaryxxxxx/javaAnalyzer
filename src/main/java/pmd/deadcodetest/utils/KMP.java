@@ -1,6 +1,7 @@
 package pmd.deadcodetest.utils;
 
 public class KMP {
+    private int aa;
     //构建next表
     public static int[] buildNext(String sub){
         //构建next表就是查找真前缀 == 真后缀的最大长度，以获取模式串尽量多地往右移动

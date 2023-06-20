@@ -148,12 +148,16 @@ public class Main {
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
 
 //        String zipPath = "D:\\code\\javazip\\t0510\\javaAnalyzer.zip";
-          String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
+        String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
 //        String zipPath = "D:\\codebaseOfCodeMatcher\\test\\2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0510\\t1.zip";
 //        String zipPath = "D:\\code\\javazip\\t0515\\aws-cognito-java-desktop-app.zip";
 //        String zipPath = "D:\\code\\javazip\\t0515\\latexdraw.zip";
+        //没有test文件
 //        String zipPath = "D:\\code\\javazip\\t0530\\latexdraw.zip";
+//        String zipPath = "D:\\code\\javazip\\t0531\\t2.zip";
+//        String zipPath = "D:\\code\\javazip\\t0601\\t2.zip";
+//        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
 
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);
@@ -164,6 +168,10 @@ public class Main {
         System.out.println("原项目中的method个数："+fullMethods.size());
 //        System.out.println("原项目中的methods："+fullMethods);
 //        System.out.println("method和对应的imports："+methodAndItsImports1);
+
+//        Set<String> set1 = methodCallsWithCallee.get("latexdraw.src.main.java.net.sf.latexdraw.view.svg.SVGArrow.toSVG(SVGDocumentboolean)");
+//        Set<String> set2 = methodCallsWithCallee.get("latexdraw.src.main.java.net.sf.latexdraw.view.svg.SVGShapesFactory.fillShapeCreationList()");
+//        boolean i = fullMethods.contains("latexdraw.src.main.java.net.sf.latexdraw.view.svg.SVGShapesFactory.fillShapeCreationList()");
 
         for(String path : paths){
             parseJava(path,getBeforeZipName(zipPath));
