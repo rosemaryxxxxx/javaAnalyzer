@@ -1,6 +1,9 @@
 package shixian.utils;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
     /**
@@ -81,35 +84,72 @@ public class Utils {
         return zipPath.substring(0,len-4);
     }
 
-    public static String analyseType(String argument){
-        if(argument.startsWith("\"") && argument.endsWith("\"")){
-            return "String";
-        }
-        if(argument.startsWith("new")){
-            int j = 0;
-            int start = 0 , end = 0;
-            for(;j<argument.length();j++){
-                if(argument.charAt(j) == ' '){
-                    start = j;
-                }
-                if(argument.charAt(j) == '('){
-                    end = j;
-                    break;
-                }
+    /**
+     * 根据参数确定参数类型，包括以方法为参数的情况
+     * @param argument
+     * @param typeMap
+     * @return
+     */
+    public static String analyseType(String argument, Map<String,String> typeMap){
+        byte b = 1;
+        short s = 1;
+
+        test(1,1,1, b, s, 1);
+        test1(1.0, 2F,3, b, s, 6666L);
+
+        //首先从typeMap找
+        String mapVal = typeMap.get(argument);
+        if(mapVal != null){
+            return mapVal;
+        }else {
+            //在map中找不到的情况
+
+
+
+
+
+            if(argument.startsWith("\"") && argument.endsWith("\"")){
+                return "String";
             }
-            return argument.substring(start+1,end);
-        }
-        if(argument.endsWith("f") || argument.endsWith("F")) return "float";
-        if(argument.endsWith("d") || argument.endsWith("D")) return "double";
-        if(argument.endsWith("l") || argument.endsWith("L")) return "long";
-        char[] chars = argument.toCharArray();
-        for (char c : chars){
-            if(c<'0'||c>'9'){
-                break;
+            if(argument.startsWith("\'") && argument.endsWith("\'")){
+                return "char";
             }
+            if(argument.startsWith("new")){
+                int j = 0;
+                int start = 0 , end = 0;
+                for(;j<argument.length();j++){
+                    if(argument.charAt(j) == ' '){
+                        start = j;
+                    }
+                    if(argument.charAt(j) == '('){
+                        end = j;
+                        break;
+                    }
+                }
+                return argument.substring(start+1,end);
+            }
+            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("f") || argument.endsWith("F")) return "float";
+            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("d") || argument.endsWith("D")) return "double";
+            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("l") || argument.endsWith("L")) return "long";
+//            char[] chars = argument.toCharArray();
+//            for (char c : chars){
+//            if(c<'0'||c>'9'){
+//                break;
+//            }
+//        }
         }
-        return "others";
+
+     //在我们覆盖范围以外的地方返回一个特定的值
+        return "0";
      }
+
+
+     public static void test(double d, float f, int i, byte b, short s, long l){
+         System.out.println(d+f+i);
+     }
+    public static void test1(Double d, Float f, Integer i, Byte b, Short s, Long l){
+        System.out.println(d+f+i);
+    }
 
     public static String getClassName(String path){
         int size = path.length();

@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.h2.util.IntArray;
 
@@ -31,6 +32,8 @@ public class MethodCallExtractor1 {
     private static String beforeZipName;
     public static Map<String , List<String>> methodAndItsImports;
     public static Map<String,List<Integer>> methodAndItsPosition;
+    private Map<String,String> methodAndItsType = new HashMap<>();
+
 
     public static Map<String, List<Integer>> getMethodAndItsPosition() {
         return methodAndItsPosition;
@@ -104,6 +107,13 @@ public class MethodCallExtractor1 {
         MethodCallExtractor1.imports = imports;
     }
 
+    public Map<String, String> getMethodAndItsType() {
+        return methodAndItsType;
+    }
+
+    public void setMethodAndItsType(Map<String, String> methodAndItsType) {
+        this.methodAndItsType = methodAndItsType;
+    }
 
     /**
      * 获取方法集合(除去main函数)，map.为了生成完整的方法路径所以传入参数beforeZipName
@@ -155,6 +165,12 @@ public class MethodCallExtractor1 {
 //            System.out.println(entry.getKey() + ": " + entry.getValue());
             }
             setFullMethods(fullMethods);
+
+            //methodAndItsType
+            Map<String, String> methodAndItsType2 = visitor.getMethodAndItsType2();
+            setMethodAndItsType(methodAndItsType2);
+
+
         }catch (Exception e){
 //            e.printStackTrace();
         }
@@ -203,10 +219,20 @@ public class MethodCallExtractor1 {
         private List<String> imports = new ArrayList<>();
         private Map<String,List<String>> methodAndItsImports2 = new HashMap<>();
         private Map<String,List<Integer>> methodAndItsPosition2 = new HashMap<>();
+        private Map<String,String> methodAndItsType2 = new HashMap<>();
 
         @Override
         public void visit(MethodDeclaration n, Void arg) {
+
+            // Get the variable declarations for this method
+//            n.getBody().ifPresent(body -> body.findAll(VariableDeclarationExpr.class).forEach(vde -> {
+//
+//                // Iterate over each variable in the declaration and print its type
+//                vde.getVariables().forEach(variable -> System.out.println(variable.getName()+": "+variable.getTypeAsString()));
+//            }));
+
 //            currentMethod = n.getNameAsString();
+
             setPackageName2(pakageName);
             //获取完整路径
             currentMethod = new StringBuffer();
@@ -216,6 +242,8 @@ public class MethodCallExtractor1 {
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
+
+            methodAndItsType2.put(currentMethod.toString(),n.getTypeAsString());
 
             //获取方法的位置信息
             int startLine = n.getBegin().get().line;
@@ -249,11 +277,18 @@ public class MethodCallExtractor1 {
         @Override
         public void visit(MethodCallExpr n, Void arg) {
             String methodName = n.getNameAsString();
-            NodeList<Expression> nodeList = n.getArguments();
-            for (Expression expr : nodeList
-                 ) {
-                System.out.println(expr.calculateResolvedType().toString());
-            }
+            //参数获取
+//            NodeList<Expression> nodeList = n.getArguments();
+//            if(nodeList.isEmpty() && currentMethod!=null){
+//                methodCalls.get(currentMethod.toString()).add(methodName);
+//            }
+//            if(!nodeList.isEmpty()){
+//                for (Expression expr : nodeList
+//                ) {
+//
+//                    System.out.println(expr.calculateResolvedType().toString());
+//                }
+//            }
             //把被调用的方法名加入到对应set中
             if(currentMethod!=null){
                 methodCalls.get(currentMethod.toString()).add(methodName);
@@ -318,6 +353,14 @@ public class MethodCallExtractor1 {
 
         public void setMethodAndItsPosition2(Map<String, List<Integer>> methodAndItsPosition2) {
             this.methodAndItsPosition2 = methodAndItsPosition2;
+        }
+
+        public Map<String, String> getMethodAndItsType2() {
+            return methodAndItsType2;
+        }
+
+        public void setMethodAndItsType2(Map<String, String> methodAndItsType2) {
+            this.methodAndItsType2 = methodAndItsType2;
         }
     }
 

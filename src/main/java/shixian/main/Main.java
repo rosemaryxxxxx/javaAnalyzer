@@ -3,10 +3,12 @@ package shixian.main;
 import javaparser.utils.MethodCallExtractor1;
 import shixian.utils.Statistics;
 import utils.KMP;
+import javaparser.visitors.VariableTypeVisitor;
 
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import static javaparser.visitors.VariableTypeVisitor.extarctType;
 import static shixian.utils.Utils.*;
 import static shixian.utils.ZipFiles.extractFileStructureOfZip;
 
@@ -21,6 +23,7 @@ public class Main {
     public static List<String> deadMethods = new ArrayList<>();
     public static Map<String,List<String>> methodAndItsImports1 = new HashMap<>();
     public static Map<String,List<Integer>> methodAndItsPostion1 = new HashMap<>();
+    public static Map<String,String> methodAndItsType1 = new HashMap<>();
 //    public static Stack<String> mainAndCalleeOfMain = new Stack<>();
 
     /**
@@ -55,6 +58,11 @@ public class Main {
         temp2.putAll(methodAndItsPostion1);
         temp2.putAll(methodCallExtractor1.getMethodAndItsPosition());
         methodAndItsPostion1 = temp2;
+
+        Map<String,String> temp3 = new HashMap<>();
+        temp3.putAll(methodAndItsType1);
+        temp3.putAll(methodCallExtractor1.getMethodAndItsType());
+        methodAndItsType1 = temp3;
 
     }
 
@@ -163,7 +171,9 @@ public class Main {
         extractFileStructureOfZip(zipPath,paths);
 
         for(String path : paths){
+//            extarctType(path);
             preParseJava(path,getBeforeZipName(zipPath));
+
         }
         System.out.println("原项目中的method个数："+fullMethods.size());
 //        System.out.println("原项目中的methods："+fullMethods);

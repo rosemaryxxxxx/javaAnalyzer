@@ -6,6 +6,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.io.FileInputStream;
@@ -14,9 +15,19 @@ import java.util.*;
 public class MethodCalleeAndParameterVisitor extends VoidVisitorAdapter<Void> {
 
     private String currentMethod;
+    int t =0;
 
     @Override
     public void visit(MethodDeclaration n, Void arg) {
+
+        // Get the variable declarations for this method
+        n.getBody().ifPresent(body -> body.findAll(VariableDeclarationExpr.class).forEach(vde -> {
+
+            // Iterate over each variable in the declaration and print its type
+            vde.getVariables().forEach(variable -> System.out.println(variable.getName()+": "+variable.getTypeAsString()));
+        }));
+        System.out.println(t++);
+
         currentMethod = n.getNameAsString();
         System.out.println("方法名："+currentMethod);
         super.visit(n, arg);

@@ -16,7 +16,7 @@ import java.util.Set;
 
 //获取java文件内所有的函数调用，未去重
 public class MethodCallFinder2 {
-    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\utils.KMP.java";
+    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java";
 
     public static void main(String[] args) throws Exception {
         // 读取Java源文件
