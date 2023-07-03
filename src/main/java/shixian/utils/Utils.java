@@ -55,7 +55,7 @@ public class Utils {
     }
 
     /**
-     * 将斜杠代替为点，并且删除路径最后的“\xx.java”
+     * 将斜杠代替为点，并且删除路径最后的“.java”
      *
      * @param s
      * @return
@@ -91,11 +91,11 @@ public class Utils {
      * @return
      */
     public static String analyseType(String argument, Map<String,String> typeMap){
-        byte b = 1;
-        short s = 1;
-
-        test(1,1,1, b, s, 1);
-        test1(1.0, 2F,3, b, s, 6666L);
+//        byte b = 1;
+//        short s = 1;
+//
+//        test(1.0,1,1, b, s, 1);
+//        test1(1.0, 2F,3, b, s, 6666L);
 
         //首先从typeMap找
         String mapVal = typeMap.get(argument);

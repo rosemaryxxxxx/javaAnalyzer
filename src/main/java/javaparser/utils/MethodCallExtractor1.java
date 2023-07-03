@@ -123,6 +123,7 @@ public class MethodCallExtractor1 {
     public void preStartParse(String beforeZipName) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(PATH);
 
+        //example: packageName1 = pmd.deadcodetest.utils.KMP
         String packageName1 = replaceSlashWithPoint(PATH.substring(index0fLastSlash(beforeZipName)+1));
         setPakageName(packageName1);
 
@@ -147,6 +148,7 @@ public class MethodCallExtractor1 {
 //            for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
 //                entry1.getValue().add(packageName1);
 //            }
+            //检查方法是否属于某一个包的时候使用包名的路径而不是类的路径
             String pakageNameWithoutClassName = packageName1.substring(0,index0fLastPoint(packageName1));
             for(Map.Entry<String, List<String>> entry1 : methodAndItsImports.entrySet() ){
                 entry1.getValue().add(pakageNameWithoutClassName);
@@ -237,8 +239,9 @@ public class MethodCallExtractor1 {
             //获取完整路径
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
-            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()));
-            currentMethod.append(")");
+            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
+            currentMethod.deleteCharAt(currentMethod.length()-1).append(")");
+//            currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
@@ -266,8 +269,9 @@ public class MethodCallExtractor1 {
             //获取完整路径
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
-            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()));
-            currentMethod.append(")");
+            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
+            currentMethod.deleteCharAt(currentMethod.length()-1).append(")");
+//            currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
@@ -278,8 +282,18 @@ public class MethodCallExtractor1 {
         public void visit(MethodCallExpr n, Void arg) {
             String methodName = n.getNameAsString();
             //参数获取
-//            NodeList<Expression> nodeList = n.getArguments();
-//            if(nodeList.isEmpty() && currentMethod!=null){
+            NodeList<Expression> nodeList = n.getArguments();
+            if(currentMethod != null && nodeList != null){
+                if(nodeList.size() == 0){
+                    methodCalls.get(currentMethod.toString()).add(methodName);
+                }else {
+                    for (Expression expression : nodeList) {
+                        //对参数的具体操作
+//                        System.out.println(expression.toString());
+                    }
+                }
+            }
+//            if(nodeList.size() == 0 && currentMethod!=null){
 //                methodCalls.get(currentMethod.toString()).add(methodName);
 //            }
 //            if(!nodeList.isEmpty()){
@@ -290,9 +304,9 @@ public class MethodCallExtractor1 {
 //                }
 //            }
             //把被调用的方法名加入到对应set中
-            if(currentMethod!=null){
-                methodCalls.get(currentMethod.toString()).add(methodName);
-            }
+//            if(currentMethod!=null){
+//                methodCalls.get(currentMethod.toString()).add(methodName);
+//            }
             super.visit(n, arg);
         }
         @Override

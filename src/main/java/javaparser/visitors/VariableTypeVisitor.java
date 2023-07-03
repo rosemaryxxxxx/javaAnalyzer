@@ -12,9 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static shixian.utils.Utils.*;
+
 //获取java文件中函数中定义的每一个变量的类型
 public class VariableTypeVisitor extends VoidVisitorAdapter<Void> {
     static Map<String, String> augementAndType = new HashMap<>();
+    static String PATH;
+    static Map<String,Map<String,String>> classAndAugmentType = new HashMap<>();
+
 
     @Override
     public void visit(MethodDeclaration md, Void arg) {
@@ -29,16 +34,13 @@ public class VariableTypeVisitor extends VoidVisitorAdapter<Void> {
 //                    System.out.println(variable.getName()+": "+variable.getTypeAsString())
                     );
         }));
+
     }
 
+
+
     public static void main(String[] args) throws FileNotFoundException {
-        FileInputStream in = new FileInputStream("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java");
-        CompilationUnit cu = StaticJavaParser.parse(in);
-
-        VariableTypeVisitor visitor = new VariableTypeVisitor();
-        visitor.visit(cu, null);
-
-        Map<String, String> augementAndType1 = augementAndType;
+        String path = "D:\\code\\javazip\\t0607\\constructor\\TestAnimal.java";
     }
 
     /**
@@ -46,12 +48,17 @@ public class VariableTypeVisitor extends VoidVisitorAdapter<Void> {
      * @param javaPath
      * @throws FileNotFoundException
      */
-    public static Map<String, String> extarctType(String javaPath) throws FileNotFoundException {
+    public static Map<String,Map<String,String>> extarctType(String javaPath, String beforeZipName) throws FileNotFoundException {
+        PATH = javaPath;
+        String packageName1;
+        //example: packageName1 = pmd.deadcodetest.utils.KMP，准确的说是类名不是包名。
+        packageName1 = replaceSlashWithPoint(PATH.substring(index0fLastSlash(beforeZipName)+1));
         FileInputStream in = new FileInputStream(javaPath);
         CompilationUnit cu = StaticJavaParser.parse(in);
         VariableTypeVisitor visitor = new VariableTypeVisitor();
         visitor.visit(cu,null);
-        return augementAndType;
+        classAndAugmentType.put(packageName1,augementAndType);
+        return classAndAugmentType;
     }
 
 }

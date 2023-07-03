@@ -171,11 +171,11 @@ public class Main {
         extractFileStructureOfZip(zipPath,paths);
 
         for(String path : paths){
-//            extarctType(path);
+            extarctType(path,getBeforeZipName(zipPath));
             preParseJava(path,getBeforeZipName(zipPath));
 
         }
-        System.out.println("原项目中的method个数："+fullMethods.size());
+         System.out.println("原项目中的method个数："+fullMethods.size());
 //        System.out.println("原项目中的methods："+fullMethods);
 //        System.out.println("method和对应的imports："+methodAndItsImports1);
 
@@ -201,7 +201,7 @@ public class Main {
         float f1 = ((float) res.get(2)/((float) res.get(2)+(float) res.get(3)))*100.0f;
         System.out.println("["+zipPath+"]"+"中"+"\n"
                 +"死方法的个数："+res.get(0)+"\n"
-                +"活方法的的个数" + res.get(1)+"\n"
+                +"活方法的的个数：" + res.get(1)+"\n"
                 +"死方法的代码行："+res.get(2)+"\n"
                 +"活方法的代码行："+res.get(3)+"\n"
                 +"死方法的个数占全部方法个数比例："+f+"%"+"\n"
