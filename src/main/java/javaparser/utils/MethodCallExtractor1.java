@@ -25,14 +25,15 @@ public class MethodCallExtractor1 {
 //    public static String PATH = "D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java";
     private static String PATH;
     public static String pakageName;
-    public static List<String> imports;
-    public static List<String> fullMethods;
-    public static Map<String, Set<String>> methodCallsWithCallee;
-    public static Stack<String> mainAndCalleeOfMain;
+    public static List<String> imports = new ArrayList<>();
+    public static List<String> fullMethods = new ArrayList<>();
+    public static Map<String, Set<String>> methodCallsWithCallee = new HashMap<>();
+    public static Stack<String> mainAndCalleeOfMain = new Stack<>();
     private static String beforeZipName;
-    public static Map<String , List<String>> methodAndItsImports;
-    public static Map<String,List<Integer>> methodAndItsPosition;
-    private Map<String,String> methodAndItsType = new HashMap<>();
+    public static Map<String , List<String>> methodAndItsImports = new HashMap<>();
+    public static Map<String,List<Integer>> methodAndItsPosition = new HashMap<>();
+    private static Map<String,String> methodAndItsType = new HashMap<>();
+    private static Map<String,Map<String,String>> classAndAugmentType = new HashMap<>();
 
 
     public static Map<String, List<Integer>> getMethodAndItsPosition() {
@@ -113,6 +114,14 @@ public class MethodCallExtractor1 {
 
     public void setMethodAndItsType(Map<String, String> methodAndItsType) {
         this.methodAndItsType = methodAndItsType;
+    }
+
+    public static Map<String, Map<String, String>> getClassAndAugmentType() {
+        return classAndAugmentType;
+    }
+
+    public static void setClassAndAugmentType(Map<String, Map<String, String>> classAndAugmentType) {
+        MethodCallExtractor1.classAndAugmentType = classAndAugmentType;
     }
 
     /**
@@ -222,6 +231,7 @@ public class MethodCallExtractor1 {
         private Map<String,List<String>> methodAndItsImports2 = new HashMap<>();
         private Map<String,List<Integer>> methodAndItsPosition2 = new HashMap<>();
         private Map<String,String> methodAndItsType2 = new HashMap<>();
+        private Map<String,Map<String,String>> classAndAugmentType2 = new HashMap<>();
 
         @Override
         public void visit(MethodDeclaration n, Void arg) {
@@ -240,8 +250,12 @@ public class MethodCallExtractor1 {
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
             n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
-            currentMethod.deleteCharAt(currentMethod.length()-1).append(")");
-//            currentMethod.append(")");
+            //考虑到currentMethod没有参数的情况
+            if(currentMethod.charAt(currentMethod.length()-1) == ','){
+                currentMethod.deleteCharAt(currentMethod.length()-1);
+            }
+            currentMethod.append(")");
+
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
@@ -270,8 +284,10 @@ public class MethodCallExtractor1 {
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
             n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
-            currentMethod.deleteCharAt(currentMethod.length()-1).append(")");
-//            currentMethod.append(")");
+            if(currentMethod.charAt(currentMethod.length()-1) == ','){
+                currentMethod.deleteCharAt(currentMethod.length()-1);
+            }
+            currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
@@ -280,33 +296,29 @@ public class MethodCallExtractor1 {
 
         @Override
         public void visit(MethodCallExpr n, Void arg) {
+//            String className = getClassName(pakageName);
+            setClassAndAugmentType2(classAndAugmentType);
             String methodName = n.getNameAsString();
+//            methodCalls.get(currentMethod.toString()).add(methodName+"()");
+            StringBuilder  methodNameWithArgument = new StringBuilder(methodName);
+            methodNameWithArgument.append('(');
             //参数获取
             NodeList<Expression> nodeList = n.getArguments();
             if(currentMethod != null && nodeList != null){
                 if(nodeList.size() == 0){
-                    methodCalls.get(currentMethod.toString()).add(methodName);
+                    methodCalls.get(currentMethod.toString()).add(methodName+"()");
                 }else {
                     for (Expression expression : nodeList) {
                         //对参数的具体操作
-//                        System.out.println(expression.toString());
+                        //解析参数对应的类型
+                        methodNameWithArgument.append(analyseType(expression.toString(),pakageName, classAndAugmentType));
+                        methodNameWithArgument.append(',');
                     }
+                    methodNameWithArgument.deleteCharAt(methodNameWithArgument.length()-1);
+                    methodNameWithArgument.append(')');
+                    methodCalls.get(currentMethod.toString()).add(methodNameWithArgument.toString());
                 }
             }
-//            if(nodeList.size() == 0 && currentMethod!=null){
-//                methodCalls.get(currentMethod.toString()).add(methodName);
-//            }
-//            if(!nodeList.isEmpty()){
-//                for (Expression expr : nodeList
-//                ) {
-//
-//                    System.out.println(expr.calculateResolvedType().toString());
-//                }
-//            }
-            //把被调用的方法名加入到对应set中
-//            if(currentMethod!=null){
-//                methodCalls.get(currentMethod.toString()).add(methodName);
-//            }
             super.visit(n, arg);
         }
         @Override
@@ -375,6 +387,14 @@ public class MethodCallExtractor1 {
 
         public void setMethodAndItsType2(Map<String, String> methodAndItsType2) {
             this.methodAndItsType2 = methodAndItsType2;
+        }
+
+        public Map<String, Map<String, String>> getClassAndAugmentType2() {
+            return classAndAugmentType2;
+        }
+
+        public void setClassAndAugmentType2(Map<String, Map<String, String>> classAndAugmentType2) {
+            this.classAndAugmentType2 = classAndAugmentType2;
         }
     }
 

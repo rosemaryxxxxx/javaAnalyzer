@@ -48,7 +48,7 @@ public class VariableTypeVisitor extends VoidVisitorAdapter<Void> {
      * @param javaPath
      * @throws FileNotFoundException
      */
-    public static Map<String,Map<String,String>> extarctType(String javaPath, String beforeZipName) throws FileNotFoundException {
+    public static Map<String,Map<String,String>> extarctClassAndAugmentType(String javaPath, String beforeZipName) throws FileNotFoundException {
         PATH = javaPath;
         String packageName1;
         //example: packageName1 = pmd.deadcodetest.utils.KMP，准确的说是类名不是包名。

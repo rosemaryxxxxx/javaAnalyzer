@@ -86,28 +86,22 @@ public class Utils {
 
     /**
      * 根据参数确定参数类型，包括以方法为参数的情况
-     * @param argument
-     * @param typeMap
      * @return
      */
-    public static String analyseType(String argument, Map<String,String> typeMap){
+    public static String analyseType(String argument,String className, Map<String,Map<String,String>> classAndAugmentType){
 //        byte b = 1;
 //        short s = 1;
 //
-//        test(1.0,1,1, b, s, 1);
-//        test1(1.0, 2F,3, b, s, 6666L);
+//        test(1,1.0f,1, b, s, 1);
+//        test1(1, 1.0f,3, 1, 1, 6666L);
 
-        //首先从typeMap找
-        String mapVal = typeMap.get(argument);
+        //首先从classAndAugmentType找
+        Map<String,String> augmentAndTpe = classAndAugmentType.get(className);
+        String mapVal = augmentAndTpe.get(argument);
         if(mapVal != null){
             return mapVal;
         }else {
             //在map中找不到的情况
-
-
-
-
-
             if(argument.startsWith("\"") && argument.endsWith("\"")){
                 return "String";
             }
@@ -128,15 +122,10 @@ public class Utils {
                 }
                 return argument.substring(start+1,end);
             }
-            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("f") || argument.endsWith("F")) return "float";
-            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("d") || argument.endsWith("D")) return "double";
-            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("l") || argument.endsWith("L")) return "long";
-//            char[] chars = argument.toCharArray();
-//            for (char c : chars){
-//            if(c<'0'||c>'9'){
-//                break;
-//            }
-//        }
+            //数字的分析在int和Integer，double和Double，float和Float的时候不能确定
+//            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("f") || argument.endsWith("F")) return "float";
+//            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("d") || argument.endsWith("D")) return "double";
+//            if(Character.isDigit(argument.charAt(0)) && argument.endsWith("l") || argument.endsWith("L")) return "long";
         }
 
      //在我们覆盖范围以外的地方返回一个特定的值
@@ -151,19 +140,19 @@ public class Utils {
         System.out.println(d+f+i);
     }
 
-    public static String getClassName(String path){
-        int size = path.length();
-        int left = 0,right = 0;
-        for(int i=size-1;i>0;i--){
-            if(path.charAt(i) == '.'){
-                right = i;
-            }
-            if(path.charAt(i) == '\\'){
-                left = i;
+    /**
+     * 获取类名
+     * @param packageName ,pmd.deadcodetest.utils.KMP
+     * @return
+     */
+    public static String getClassName(String packageName){
+        int i = packageName.length()-1;
+        for(;i>0;i--){
+            if(packageName.charAt(i) == '.'){
                 break;
             }
         }
-        return path.substring(left+1,right);
+        return packageName.substring(i+1);
     }
 
     public static int index0fLastSlash(String beforeZipName){

@@ -8,7 +8,7 @@ import javaparser.visitors.VariableTypeVisitor;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-import static javaparser.visitors.VariableTypeVisitor.extarctType;
+import static javaparser.visitors.VariableTypeVisitor.extarctClassAndAugmentType;
 import static shixian.utils.Utils.*;
 import static shixian.utils.ZipFiles.extractFileStructureOfZip;
 
@@ -24,6 +24,7 @@ public class Main {
     public static Map<String,List<String>> methodAndItsImports1 = new HashMap<>();
     public static Map<String,List<Integer>> methodAndItsPostion1 = new HashMap<>();
     public static Map<String,String> methodAndItsType1 = new HashMap<>();
+    public static Map<String,Map<String,String>>  classAndAugmentType1 = new HashMap<>();
 //    public static Stack<String> mainAndCalleeOfMain = new Stack<>();
 
     /**
@@ -35,10 +36,11 @@ public class Main {
 //        List<String> imports = new ArrayList<>();
 
         MethodCallExtractor1 methodCallExtractor1 = new MethodCallExtractor1();
-//        methodCallExtractor1.setPATH("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMP.java");
         methodCallExtractor1.setPATH(path);
+        methodCallExtractor1.setClassAndAugmentType(classAndAugmentType1);
 //        methodCallExtractor1.setBeforeZipName(beforeZipName);
         methodCallExtractor1.preStartParse(beforeZipName);
+        List<String> s = methodCallExtractor1.getFullMethods();
 
         fullMethods.addAll(methodCallExtractor1.getFullMethods());
 
@@ -156,7 +158,7 @@ public class Main {
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
 
 //        String zipPath = "D:\\code\\javazip\\t0510\\javaAnalyzer.zip";
-        String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
+//        String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
 //        String zipPath = "D:\\codebaseOfCodeMatcher\\test\\2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0510\\t1.zip";
 //        String zipPath = "D:\\code\\javazip\\t0515\\aws-cognito-java-desktop-app.zip";
@@ -166,14 +168,14 @@ public class Main {
 //        String zipPath = "D:\\code\\javazip\\t0531\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0601\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
+        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
 
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);
 
         for(String path : paths){
-            extarctType(path,getBeforeZipName(zipPath));
+            classAndAugmentType1 = extarctClassAndAugmentType(path,getBeforeZipName(zipPath));
             preParseJava(path,getBeforeZipName(zipPath));
-
         }
          System.out.println("原项目中的method个数："+fullMethods.size());
 //        System.out.println("原项目中的methods："+fullMethods);
@@ -186,7 +188,6 @@ public class Main {
         for(String path : paths){
             parseJava(path,getBeforeZipName(zipPath));
         }
-
 
 //        parseJava("D:\\code\\javazip\\t1\\00.java");
         System.out.println("死方法的个数："+deadMethods.size());
