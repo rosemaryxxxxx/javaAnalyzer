@@ -167,8 +167,8 @@ public class Main {
 //        String zipPath = "D:\\code\\javazip\\t0530\\latexdraw.zip";
 //        String zipPath = "D:\\code\\javazip\\t0531\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0601\\t2.zip";
-//        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
-        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
+        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
+//        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
 
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);

@@ -323,9 +323,24 @@ public class MethodCallExtractor1 {
         }
         @Override
         public void visit(ObjectCreationExpr n, Void arg) {
+            setClassAndAugmentType2(classAndAugmentType);
             String constructor = n.getTypeAsString();
-            if(currentMethod!=null){
-                methodCalls.get(currentMethod.toString()).add(constructor);
+            StringBuilder constructorNameWithArgument = new StringBuilder(constructor);
+            constructorNameWithArgument.append('(');
+            //参数获取
+            NodeList<Expression> nodeList = n.getArguments();
+            if(currentMethod != null && nodeList != null){
+                if(nodeList.size() == 0){
+                    methodCalls.get(currentMethod.toString()).add(constructor+"()");
+                }else {
+                    for (Expression expression : nodeList) {
+                        constructorNameWithArgument.append(analyseType(expression.toString(),pakageName,classAndAugmentType));
+                        constructorNameWithArgument.append(',');
+                    }
+                    constructorNameWithArgument.deleteCharAt(constructorNameWithArgument.length()-1);
+                    constructorNameWithArgument.append(')');
+                    methodCalls.get(currentMethod.toString()).add(constructorNameWithArgument.toString());
+                }
             }
             super.visit(n, arg);
         }
