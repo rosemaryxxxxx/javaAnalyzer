@@ -14,6 +14,7 @@ import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.h2.util.IntArray;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.PseudoColumnUsage;
@@ -131,6 +132,7 @@ public class MethodCallExtractor1 {
      */
     public void preStartParse(String beforeZipName) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(PATH);
+        new File("ds/ds-sd");
 
         //example: packageName1 = pmd.deadcodetest.utils.KMP
         String packageName1 = replaceSlashWithPoint(PATH.substring(index0fLastSlash(beforeZipName)+1));
@@ -249,9 +251,10 @@ public class MethodCallExtractor1 {
             //获取完整路径
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
-            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
+            //使用“？”而不使用“,”来隔离参数，是为了防止后续在分离参数的时候出错
+            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append("?"));
             //考虑到currentMethod没有参数的情况
-            if(currentMethod.charAt(currentMethod.length()-1) == ','){
+            if(currentMethod.charAt(currentMethod.length()-1) == '?'){
                 currentMethod.deleteCharAt(currentMethod.length()-1);
             }
             currentMethod.append(")");
@@ -283,14 +286,28 @@ public class MethodCallExtractor1 {
             //获取完整路径
             currentMethod = new StringBuffer();
             currentMethod.append(packageName2+"."+n.getName()+"(");
-            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append(","));
-            if(currentMethod.charAt(currentMethod.length()-1) == ','){
+            n.getParameters().forEach(parameter -> currentMethod.append(parameter.getType()).append("?"));
+            if(currentMethod.charAt(currentMethod.length()-1) == '?'){
                 currentMethod.deleteCharAt(currentMethod.length()-1);
             }
             currentMethod.append(")");
             methodCalls.put(currentMethod.toString(), new HashSet<>());
 
             methodAndItsImports2.put(currentMethod.toString(),imports);
+
+
+            //获取构造方法的位置信息
+            int startLine = n.getBegin().get().line;
+            int startCol = n.getBegin().get().column;
+            int endLine = n.getEnd().get().line;
+            int endCol = n.getEnd().get().column;
+            List<Integer> positionList = new ArrayList<>();
+            positionList.add(startLine);
+            positionList.add(startCol);
+            positionList.add(endLine);
+            positionList.add(endCol);
+            methodAndItsPosition2.put(currentMethod.toString(),positionList);
+
             super.visit(n, arg);
         }
 
@@ -312,7 +329,7 @@ public class MethodCallExtractor1 {
                         //对参数的具体操作
                         //解析参数对应的类型
                         methodNameWithArgument.append(analyseType(expression.toString(),pakageName, classAndAugmentType));
-                        methodNameWithArgument.append(',');
+                        methodNameWithArgument.append('?');
                     }
                     methodNameWithArgument.deleteCharAt(methodNameWithArgument.length()-1);
                     methodNameWithArgument.append(')');
@@ -321,6 +338,7 @@ public class MethodCallExtractor1 {
             }
             super.visit(n, arg);
         }
+        //构造函数
         @Override
         public void visit(ObjectCreationExpr n, Void arg) {
             setClassAndAugmentType2(classAndAugmentType);
@@ -335,7 +353,7 @@ public class MethodCallExtractor1 {
                 }else {
                     for (Expression expression : nodeList) {
                         constructorNameWithArgument.append(analyseType(expression.toString(),pakageName,classAndAugmentType));
-                        constructorNameWithArgument.append(',');
+                        constructorNameWithArgument.append('?');
                     }
                     constructorNameWithArgument.deleteCharAt(constructorNameWithArgument.length()-1);
                     constructorNameWithArgument.append(')');

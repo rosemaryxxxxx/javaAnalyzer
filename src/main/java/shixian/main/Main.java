@@ -99,11 +99,13 @@ public class Main {
             Set<String> setofmethod = methodCallsWithCallee.get(mainOrCalleeOfMain);
             for (String name:setofmethod){
                 List<String> sameNames = new ArrayList<>();
-                for (String stringBuffer : fullMethods){
-                    String methodNameString = getMethodName(stringBuffer);
+                for (String fullMethod : fullMethods){
                     //和方法集合匹配
-                    if(Objects.equals(getMethodNameInSet(name), methodNameString)){
-                        sameNames.add(stringBuffer);
+//                    if(Objects.equals(getMethodNameInSet(name), methodNameString)){
+//                        sameNames.add(stringBuffer);
+//                    }
+                    if(isMatched(name, fullMethod)){
+                        sameNames.add(fullMethod);
                     }
                 }
 
@@ -118,30 +120,22 @@ public class Main {
                     deadMethods.remove(sameNames.get(0));
                 }
                 if(sameNames.size() > 1){
-                    int flag = 0;
                     for(String samename : sameNames){
-                        String sameNameString = samename;
-
                         for(String importEle : imports){
                             //匹配import,注意以*结尾的import
 //                            System.out.println("方法名："+sameNameString+",import："+importEle);
-                            if(KMP.kmp(sameNameString,removeStarIfExist(importEle))){
+                            if(KMP.kmp(samename,removeStarIfExist(importEle))){
 //                                fullMethods.remove(samename);
                                 //防止循环调用
                                 if(getMethodName(samename).equals(getMethodName(mainOrCalleeOfMain))){
-                                    flag=1;
                                     break;
                                 }
                                 //活方法入栈
                                 mainAndCalleeOfMain.push(samename);
                                 deadMethods.remove(samename);
-                                flag=1;
                                 break;
                             }
                         }
-//                        if(flag==1){
-//                            break;
-//                        }
                     }
 
                 }
@@ -167,8 +161,8 @@ public class Main {
 //        String zipPath = "D:\\code\\javazip\\t0530\\latexdraw.zip";
 //        String zipPath = "D:\\code\\javazip\\t0531\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0601\\t2.zip";
-        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
-//        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
+//        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
+        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
 
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);

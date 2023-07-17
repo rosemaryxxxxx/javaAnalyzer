@@ -1,7 +1,9 @@
 package shixian.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import entity.Method;
+
+import java.lang.annotation.ElementType;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -176,6 +178,115 @@ public class Utils {
         }
         return j;
     }
+
+    /**
+     * 判断被调用方法集合中的方法和所有方法中是否方法名一样
+     * @param methodInSet ,例test(0,String)
+     * @param methodName , 例xx.xxxx.test(int,String)
+     * @return
+     */
+    public static boolean isMatched(String methodInSet , String methodName){
+        List<String> splitMethodInSet = splitFullMethodName(methodInSet);
+        List<String> splitMethodName = splitFullMethodName(methodName);
+
+        //方法名（完整）不同直接返回false
+        if(!splitMethodName.get(0).equals(splitMethodInSet.get(0))){
+            return false;
+        }else {
+            //参数个数不同直接返回false
+            if(splitMethodName.size() != splitMethodInSet.size()){
+                return false;
+            } else {
+                for(int i = 1 ; i < splitMethodName.size() ; i++){
+                    if(splitMethodInSet.get(i).equals("0")) continue;
+                    if(!splitMethodName.get(i).equals(splitMethodInSet.get(i))){
+                        return false;
+                    }
+                }
+            }
+
+        }
+        return true;
+    }
+
+    /**
+     * 把一个完整的方法分解成List，第一个元素是方法名，后续元素的方法参数，并且参数保留原顺序
+     * @param fullMethodName
+     * @return
+     */
+    private static List<String> splitFullMethodName(String fullMethodName){
+        int indexOfOpeningParentheses = 0;
+        int indexOfStartMethod = 0;
+        String methodNameWithoutArgument;
+        String arguments;
+        List<String> result = new ArrayList<>();
+        for(int i = 0 ; i < fullMethodName.length() ; i++){
+            if(fullMethodName.charAt(i) == '('){
+                indexOfOpeningParentheses = i;
+                break;
+            }
+        }
+        for(int i = indexOfOpeningParentheses ; i >= 0 ; i--){
+            if(fullMethodName.charAt(i) == '.'){
+                indexOfStartMethod = i + 1;
+                break;
+            }
+        }
+        methodNameWithoutArgument = fullMethodName.substring(indexOfStartMethod,indexOfOpeningParentheses);
+        result.add(methodNameWithoutArgument);
+        if(fullMethodName.charAt(indexOfOpeningParentheses+1) == ')'){
+            return result;
+        }else {
+            arguments = fullMethodName.substring(indexOfOpeningParentheses+1 , fullMethodName.length()-1);
+            result.addAll(Arrays.asList(arguments.split("\\?")));
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+//        String methodInSet = "test(List<String>)";
+//        String methodName = "xxx.dfdd.ggg.test111(List<String>)";
+//        String methodInSet1 = "test(List<String>,0)";
+//        String methodName1 = "xxx.dfdd.ggg.test(List<String>,int,String)";
+//        String methodInSet2 = "test(List<String>,0,String,int)";
+//        String methodName2 = "xxx.dfdd.ggg.test(List<String>,int,String,float)";
+        String methodInSet3 = "overload.Overloading.test(int)";
+        String methodName3 = "overload.Overloading.test(String?int)";
+//        System.out.println(isMatched(methodInSet ,  methodName));
+//        System.out.println(isMatched(methodInSet1 ,  methodName1));
+//        System.out.println(isMatched(methodInSet2 ,  methodName2));
+        System.out.println(isMatched(methodInSet3 ,  methodName3));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
