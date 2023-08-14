@@ -54,9 +54,16 @@ public class VariableTypeVisitor extends VoidVisitorAdapter<Void> {
         //example: packageName1 = pmd.deadcodetest.utils.KMP，准确的说是类名不是包名。
         packageName1 = replaceSlashWithPoint(PATH.substring(index0fLastSlash(beforeZipName)+1));
         FileInputStream in = new FileInputStream(javaPath);
-        CompilationUnit cu = StaticJavaParser.parse(in);
-        VariableTypeVisitor visitor = new VariableTypeVisitor();
-        visitor.visit(cu,null);
+        try {
+            CompilationUnit cu = StaticJavaParser.parse(in);
+            VariableTypeVisitor visitor = new VariableTypeVisitor();
+            visitor.visit(cu,null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+//        CompilationUnit cu = StaticJavaParser.parse(in);
+//        VariableTypeVisitor visitor = new VariableTypeVisitor();
+//        visitor.visit(cu,null);
         classAndAugmentType.put(packageName1,augementAndType);
         return classAndAugmentType;
     }

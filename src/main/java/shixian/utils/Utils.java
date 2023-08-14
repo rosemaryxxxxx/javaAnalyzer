@@ -181,7 +181,7 @@ public class Utils {
 
     /**
      * 判断被调用方法集合中的方法和所有方法中是否方法名一样
-     * @param methodInSet ,例test(0,String)
+     * @param methodInSet ,例test(0,“this is a String”)
      * @param methodName , 例xx.xxxx.test(int,String)
      * @return
      */
@@ -189,7 +189,7 @@ public class Utils {
         List<String> splitMethodInSet = splitFullMethodName(methodInSet);
         List<String> splitMethodName = splitFullMethodName(methodName);
 
-        //方法名（完整）不同直接返回false
+        //方法名不同直接返回false
         if(!splitMethodName.get(0).equals(splitMethodInSet.get(0))){
             return false;
         }else {

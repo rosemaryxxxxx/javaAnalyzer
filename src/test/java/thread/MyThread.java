@@ -1,8 +1,6 @@
 package thread;
 
 public class MyThread extends Thread{
-    public MyThread() {
-    }
 
     public MyThread(String name) {
         super(name);
@@ -11,8 +9,12 @@ public class MyThread extends Thread{
     //run方法是每个线程运行过程中都必须执行的方法
     @Override
     public void run() {
-        for (int i = 0; i < 50; i++) {
-            System.out.println(this.getName() + ":" + i);
-        }
+        System.out.println(this.getName());
+    }
+
+    public static void main(String[] args) {
+        //创建线程
+        MyThread t01 = new MyThread("Threat01");
+        t01.start();
     }
 }

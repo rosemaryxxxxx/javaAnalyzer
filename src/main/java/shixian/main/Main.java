@@ -112,7 +112,7 @@ public class Main {
                 if(sameNames.size() == 1){
                     //防止循环调用
                     if(getMethodName(sameNames.get(0)).equals(getMethodName(mainOrCalleeOfMain))){
-                        break;
+                        continue;
                     }
                     //活方法入栈
                     mainAndCalleeOfMain.push(sameNames.get(0));
@@ -128,7 +128,7 @@ public class Main {
 //                                fullMethods.remove(samename);
                                 //防止循环调用
                                 if(getMethodName(samename).equals(getMethodName(mainOrCalleeOfMain))){
-                                    break;
+                                    continue;
                                 }
                                 //活方法入栈
                                 mainAndCalleeOfMain.push(samename);
@@ -137,7 +137,6 @@ public class Main {
                             }
                         }
                     }
-
                 }
             }
         }
@@ -147,11 +146,12 @@ public class Main {
 
 
     public static void main(String[] srgs) throws FileNotFoundException {
+        long startTime = System.currentTimeMillis();
 //        List<String> paths = new ArrayList<>();
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\KMPWithMain.java");
 //        paths.add("D:\\code\\javaAnalyzer\\src\\main\\java\\pmd\\deadcodetest\\utils\\callsss.java");
 
-//        String zipPath = "D:\\code\\javazip\\t0510\\javaAnalyzer.zip";
+        String zipPath = "D:\\code\\javazip\\t0510\\javaAnalyzer.zip";
 //        String zipPath = "D:\\code\\javazip\\t0504\\pmd.zip";
 //        String zipPath = "D:\\codebaseOfCodeMatcher\\test\\2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0510\\t1.zip";
@@ -162,8 +162,8 @@ public class Main {
 //        String zipPath = "D:\\code\\javazip\\t0531\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0601\\t2.zip";
 //        String zipPath = "D:\\code\\javazip\\t0607\\constructor.zip";
-        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
-
+//        String zipPath = "D:\\code\\javazip\\t0607\\overload.zip";
+//        String zipPath = "D:\\code\\javazip\\t0607\\swich.zip";
         List<String> paths = new ArrayList<>();
         extractFileStructureOfZip(zipPath,paths);
 
@@ -202,5 +202,8 @@ public class Main {
                 +"死方法的个数占全部方法个数比例："+f+"%"+"\n"
                 +"死方法代码行占全部方法代码行的比例："+f1+"%"+"\n"
         );
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("程序运行时间：" + totalTime + "毫秒");
     }
 }

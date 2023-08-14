@@ -211,7 +211,8 @@ public class MethodCallExtractor1 {
             for (Map.Entry<String, Set<String>> entry : methodCalls.entrySet()) {
 //                String liveMehod = "fillShapeCreationList";
                 String liveMehod = "main";
-                if (getMethodName(entry.getKey()).equals(liveMehod) ) {
+                String entrance = "toSVG";
+                if (getMethodName(entry.getKey()).equals(liveMehod) || getMethodName(entry.getKey()).equals(entrance) ) {
                     mainAndCalleeOfMain.push(entry.getKey());
                 }
             }

@@ -4,8 +4,8 @@ public class Demo01 {
 
     public static void main(String[] args) {
         //创建线程
-        MyThread t01 = new MyThread();
-        MyThread t02 = new MyThread();
+        MyThread t01 = new MyThread("线程01");
+        MyThread t02 = new MyThread("线程02");
         MyThread t03 = new MyThread("线程03");
 
         //开启线程
